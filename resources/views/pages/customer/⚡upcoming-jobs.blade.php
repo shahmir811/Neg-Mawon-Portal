@@ -10,10 +10,10 @@ use Livewire\Component;
 new #[Title('Upcoming Jobs')] class extends Component
 {
     /**
-     * Not-yet-completed jobs (requested or assigned), soonest first. Only
-     * fields the privacy rule allows a customer to see (AGENTS.md Section 5)
-     * — job details plus the assigned cleaner's photo, never the cleaner's
-     * name, phone, email, or ID.
+     * Not-yet-completed jobs (requested or assigned), most recently
+     * requested first. Only fields the privacy rule allows a customer to see
+     * (AGENTS.md Section 5) — job details plus the assigned cleaner's photo,
+     * never the cleaner's name, phone, email, or ID.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -23,7 +23,7 @@ new #[Title('Upcoming Jobs')] class extends Component
         return Auth::user()->jobsAsCustomer()
             ->with('photos')
             ->whereIn('status', [JobStatus::Requested, JobStatus::Assigned])
-            ->oldest('requested_at')
+            ->latest('created_at')
             ->get()
             ->map(fn (CleaningJob $job) => $job->toCustomerArray())
             ->all();

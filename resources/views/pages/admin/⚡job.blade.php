@@ -90,8 +90,31 @@ new #[Title('Job details')] class extends Component
                     <dd class="mt-1"><flux:text>{{ $this->details['frequency']?->label() ?? __('Not specified') }}</flux:text></dd>
                 </div>
                 <div>
+                    <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Type of cleaning') }}</dt>
+                    <dd class="mt-1"><flux:text>{{ $this->details['cleaning_type']?->label() ?? __('Not specified') }}</flux:text></dd>
+                </div>
+                <div>
                     <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Property size') }}</dt>
                     <dd class="mt-1"><flux:text>{{ $this->details['property_size'] ?: __('Not specified') }}</flux:text></dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Pets') }}</dt>
+                    <dd class="mt-1">
+                        <flux:text>
+                            @if ($this->details['has_pets'])
+                                {{ $this->details['pet_count'] }} &middot;
+                                {{ collect($this->details['pet_types'] ?? [])->map(fn ($type) => $type === \App\Enums\PetType::Other->value && $this->details['pet_type_other']
+                                    ? __('Other (:description)', ['description' => $this->details['pet_type_other']])
+                                    : \App\Enums\PetType::from($type)->label())->join(', ') }}
+                            @else
+                                {{ __('No pets') }}
+                            @endif
+                        </flux:text>
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Laundry add-on') }}</dt>
+                    <dd class="mt-1"><flux:text>{{ $this->details['laundry_addon'] ? __('Yes — bill separately') : __('No') }}</flux:text></dd>
                 </div>
                 <div>
                     <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Status') }}</dt>

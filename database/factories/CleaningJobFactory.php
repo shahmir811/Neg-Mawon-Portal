@@ -2,8 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Enums\CleaningType;
 use App\Enums\JobFrequency;
 use App\Enums\JobStatus;
+use App\Enums\PetType;
 use App\Enums\PropertyType;
 use App\Enums\ServiceType;
 use App\Models\CleaningJob;
@@ -31,7 +33,12 @@ class CleaningJobFactory extends Factory
             'property_type' => fake()->randomElement(PropertyType::cases()),
             'service_type' => fake()->randomElement(ServiceType::cases()),
             'frequency' => fake()->randomElement(JobFrequency::cases()),
+            'cleaning_type' => CleaningType::Deep,
             'property_size' => fake()->randomElement(['Under 1,000 sq ft', '1,000-3,000 sq ft', '3,000-5,000 sq ft', '5,000+ sq ft']),
+            'has_pets' => false,
+            'pet_types' => [],
+            'pet_count' => null,
+            'laundry_addon' => false,
             'status' => JobStatus::Requested,
         ];
     }
@@ -49,6 +56,15 @@ class CleaningJobFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'cleaner_id' => User::factory()->cleaner(),
             'status' => JobStatus::Completed,
+        ]);
+    }
+
+    public function withPets(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'has_pets' => true,
+            'pet_types' => [PetType::Dog->value],
+            'pet_count' => 1,
         ]);
     }
 }

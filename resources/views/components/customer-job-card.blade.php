@@ -39,6 +39,21 @@
                         {{ $job['service_type']->label() }}
                     </span>
                 @endif
+                @if ($job['cleaning_type'])
+                    <span class="inline-flex items-center gap-1.5 text-sm text-text/70">
+                        <flux:icon.spray-can class="size-4 text-text/40" />
+                        {{ $job['cleaning_type']->label() }}
+                    </span>
+                @endif
+                @if ($job['has_pets'])
+                    <span class="inline-flex items-center gap-1.5 text-sm text-text/70">
+                        <flux:icon.paw-print class="size-4 text-text/40" />
+                        {{ __(':count pet(s)', ['count' => $job['pet_count'] ?? '?']) }}
+                    </span>
+                @endif
+                @if ($job['laundry_addon'])
+                    <flux:badge size="sm" color="amber">{{ __('Laundry add-on') }}</flux:badge>
+                @endif
             </div>
 
             @if ($job['notes'])
@@ -55,7 +70,15 @@
         </div>
     </div>
 
-    <flux:badge :color="$statusColor" class="w-fit shrink-0">
-        {{ ucfirst($job['status']->value) }}
-    </flux:badge>
+    <div class="flex shrink-0 flex-col items-end gap-2">
+        <flux:badge :color="$statusColor" class="w-fit">
+            {{ ucfirst($job['status']->value) }}
+        </flux:badge>
+
+        @if ($job['status'] === \App\Enums\JobStatus::Requested)
+            <flux:button size="sm" variant="ghost" :href="route('customer.jobs.edit', $job['id'])" wire:navigate>
+                {{ __('Edit') }}
+            </flux:button>
+        @endif
+    </div>
 </div>
