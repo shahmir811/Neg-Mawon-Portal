@@ -169,7 +169,17 @@ new #[Title('Admin Dashboard')] class extends Component
                                 @endif
                             </flux:table.cell>
                             <flux:table.cell>{{ $job['address'] }}</flux:table.cell>
-                            <flux:table.cell>{{ $job['property_size'] }}</flux:table.cell>
+                            <flux:table.cell>
+                                {{ $job['property_size'] }}
+                                <div class="mt-1 flex items-center gap-2">
+                                    @if ($job['has_pets'])
+                                        <flux:icon.paw-print class="size-4 text-text/40" variant="mini" />
+                                    @endif
+                                    @if ($job['laundry_addon'])
+                                        <flux:badge size="sm" color="amber">{{ __('Laundry') }}</flux:badge>
+                                    @endif
+                                </div>
+                            </flux:table.cell>
                             <flux:table.cell>
                                 <flux:badge :color="match ($job['status']) {
                                     JobStatus::Requested => 'zinc',

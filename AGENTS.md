@@ -93,7 +93,19 @@ James can verify one is on file.
 
 - Sign up / log in.
 - Create a job request (address, date/time, notes, property size/rooms).
-- View job status and history.
+- Specify service details on the request: home/business type (including a generic Commercial option),
+  service needed, frequency, type of cleaning (Deep or Soft), pets (yes/no, kind, count, with a free-text
+  field when "Other" is picked), and a laundry add-on flag (billed by James off-platform, not an in-app
+  charge).
+- Deep vs. Soft cleaning is gated by a 30-day repeat-client rule: first-time customers and anyone whose last
+  *completed* job was more than 30 days ago only get Deep Cleaning offered; a customer with a completed job
+  within the last 30 days can also pick Soft. Enforced both in the form UI and server-side on submit (see
+  `App\Concerns\CleaningJobFormFields`).
+- Edit a submitted job request (any of the fields above, plus address/date/notes/photos) at any time before
+  James assigns a cleaner. Once assigned, the request is locked — the edit link disappears and the edit page
+  itself redirects away if visited directly, checked both on page load and on save to close the race where
+  James assigns it while the form is open.
+- View job status and history, sorted by most recently requested first.
 - See the assigned cleaner's photo once assigned.
 - Email notification when a cleaner is assigned.
 
@@ -210,10 +222,15 @@ cleaner_profiles { id, user_id, phone, photo_path, agreement_photo_path, agreeme
                    next_renewal_at }
 customer_profiles{ id, user_id, phone }
 jobs             { id, customer_id, cleaner_id(nullable), address, requested_at, notes, property_size,
+                   property_type[residential|commercial|church|restaurant|office|retail|other],
+                   service_type, frequency, cleaning_type[deep|soft], has_pets:boolean, pet_types:json,
+                   pet_type_other(nullable), pet_count(nullable), laundry_addon:boolean,
                    status[requested|assigned|completed], created_at }
 ```
 
-This is a starting point, not a locked schema – refine as needed during Phase 1.
+This is a starting point, not a locked schema – refine as needed during Phase 1. (The columns above beyond
+`property_size`/`notes` were added post-MVP-kickoff, after a client call requested richer service-detail
+capture — see the `CleaningType`, `PropertyType`, `PetType` enums under `app/Enums/`.)
 
 ## 8a. Design system (from client-approved landing page)
 

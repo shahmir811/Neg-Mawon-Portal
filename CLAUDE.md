@@ -91,6 +91,30 @@ photo – nothing else about them.
    - A soft-deleted user can't log in — `SoftDeletingScope` is a global scope, so it's automatically excluded
      from every default `User::` query (auth lookups, admin Cleaners/Customers lists, password reset), no
      extra `whereNull('deleted_at')` needed anywhere.
+8. The customer job-request form (create *and* edit) shares one set of fields, validation, and business
+   logic via `App\Concerns\CleaningJobFormFields` (a trait) and
+   `resources/views/partials/customer-job-form-fields.blade.php` (a Blade partial). Both
+   `resources/views/pages/customer/⚡dashboard.blade.php` (create) and
+   `resources/views/pages/customer/⚡job-edit.blade.php` (edit) `use` the trait and `@include` the partial —
+   if you need to change a field, its validation, or the Deep/Soft eligibility rule, change it once in the
+   trait/partial, not in both pages. They only differ in `mount()` (edit prefills from the existing job) and
+   `submit()` (create vs. `update()`, different toast text).
+   - **Deep vs. Soft cleaning eligibility** (`CleaningJobFormFields::eligibleForSoftCleaning()`): looks only
+     at the customer's most recent job with `status = Completed`
+     (`CleaningJob::lastCompletedFor()` in `app/Models/CleaningJob.php`) — a `Requested` or `Assigned` job
+     never counts as "last service." First-time customers, or anyone whose last completed job's
+     `requested_at` was more than 30 days ago, are only offered Deep Cleaning; the form only reveals Soft as
+     an option once that check passes. This is re-validated server-side in `rules()` on every submit (create
+     *and* edit), not just hidden in the UI.
+   - **Job editing is locked once assigned**: `⚡job-edit.blade.php`'s `mount()` scopes the job lookup to
+     `Auth::user()->jobsAsCustomer()->findOrFail($job)` (a mismatched/foreign job 404s, same pattern as
+     `CleanerDashboard::markComplete()`), then redirects back to Upcoming Jobs with a toast if
+     `status !== Requested`. `submit()` re-checks the same condition on a fresh fetch of the job before
+     saving, closing the race where James assigns it in the moments the edit form is open. The Edit button
+     on `resources/views/components/customer-job-card.blade.php` is gated on the same `Requested` status, so
+     it naturally disappears the instant a job is assigned.
+   - Photo editing is add-only in both create and edit — customers can attach more photos, but there's no
+     UI to remove ones already uploaded. Don't assume photo removal exists without checking.
 
 ## When something is ambiguous
 

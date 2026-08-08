@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('/', 'pages::customer.dashboard')->name('dashboard');
         Route::livewire('upcoming-jobs', 'pages::customer.upcoming-jobs')->name('upcoming-jobs');
         Route::livewire('job-history', 'pages::customer.job-history')->name('job-history');
+        Route::livewire('jobs/{job}/edit', 'pages::customer.job-edit')->name('jobs.edit');
     });
 });
 

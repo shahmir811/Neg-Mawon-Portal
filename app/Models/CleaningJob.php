@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CleaningType;
 use App\Enums\JobFrequency;
 use App\Enums\JobStatus;
 use App\Enums\PropertyType;
@@ -22,8 +23,14 @@ use Illuminate\Support\Facades\Storage;
     'property_type',
     'service_type',
     'frequency',
+    'cleaning_type',
     'notes',
     'property_size',
+    'has_pets',
+    'pet_types',
+    'pet_type_other',
+    'pet_count',
+    'laundry_addon',
     'status',
 ])]
 class CleaningJob extends Model
@@ -42,7 +49,26 @@ class CleaningJob extends Model
             'property_type' => PropertyType::class,
             'service_type' => ServiceType::class,
             'frequency' => JobFrequency::class,
+            'cleaning_type' => CleaningType::class,
+            'has_pets' => 'boolean',
+            'pet_types' => 'array',
+            'pet_count' => 'integer',
+            'laundry_addon' => 'boolean',
         ];
+    }
+
+    /**
+     * The customer's most recently completed job, used to determine whether
+     * they're a first-time/lapsed client (deep cleaning only) or a repeat
+     * client serviced within the last 30 days (soft cleaning unlocked).
+     */
+    public static function lastCompletedFor(User $customer): ?self
+    {
+        return static::query()
+            ->where('customer_id', $customer->id)
+            ->where('status', JobStatus::Completed)
+            ->latest('requested_at')
+            ->first();
     }
 
     /** @return BelongsTo<User, $this> */
@@ -103,7 +129,13 @@ class CleaningJob extends Model
             'property_type' => $this->property_type,
             'service_type' => $this->service_type,
             'frequency' => $this->frequency,
+            'cleaning_type' => $this->cleaning_type,
             'property_size' => $this->property_size,
+            'has_pets' => $this->has_pets,
+            'pet_types' => $this->pet_types,
+            'pet_type_other' => $this->pet_type_other,
+            'pet_count' => $this->pet_count,
+            'laundry_addon' => $this->laundry_addon,
             'status' => $this->status,
             'google_maps_url' => $this->googleMapsUrl(),
             'photo_urls' => $this->photos->map(fn (CleaningJobPhoto $photo) => $photo->url())->all(),

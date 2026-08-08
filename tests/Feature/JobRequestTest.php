@@ -1,7 +1,9 @@
 <?php
 
+use App\Enums\CleaningType;
 use App\Enums\JobFrequency;
 use App\Enums\JobStatus;
+use App\Enums\PetType;
 use App\Enums\PropertyType;
 use App\Enums\ServiceType;
 use App\Models\CleaningJob;
@@ -23,7 +25,12 @@ test('a customer can submit a job request', function () {
         ->set('property_type', PropertyType::Residential->value)
         ->set('service_type', ServiceType::HouseCleaning->value)
         ->set('frequency', JobFrequency::OneTime->value)
+        ->set('cleaning_type', CleaningType::Deep->value)
         ->set('property_size', '1,000-3,000 sq ft')
+        ->set('has_pets', true)
+        ->set('pet_types', [PetType::Dog->value, PetType::Cat->value])
+        ->set('pet_count', 2)
+        ->set('laundry_addon', true)
         ->set('notes', 'Ring the doorbell twice')
         ->call('submit');
 
@@ -34,7 +41,85 @@ test('a customer can submit a job request', function () {
         ->and($job->notes)->toBe('Ring the doorbell twice')
         ->and($job->property_type)->toBe(PropertyType::Residential)
         ->and($job->service_type)->toBe(ServiceType::HouseCleaning)
-        ->and($job->frequency)->toBe(JobFrequency::OneTime);
+        ->and($job->frequency)->toBe(JobFrequency::OneTime)
+        ->and($job->cleaning_type)->toBe(CleaningType::Deep)
+        ->and($job->has_pets)->toBeTrue()
+        ->and($job->pet_types)->toBe([PetType::Dog->value, PetType::Cat->value])
+        ->and($job->pet_count)->toBe(2)
+        ->and($job->laundry_addon)->toBeTrue();
+});
+
+test('a customer can submit a job request for a commercial property', function () {
+    $customer = User::factory()->customer()->create();
+    $this->actingAs($customer);
+
+    Livewire::test('pages::customer.dashboard')
+        ->set('address', '789 Business Blvd, Philadelphia, PA 19111')
+        ->set('requested_at', now()->addDay()->format('Y-m-d\TH:i'))
+        ->set('property_type', PropertyType::Commercial->value)
+        ->set('service_type', ServiceType::JanitorialServices->value)
+        ->set('frequency', JobFrequency::Weekly->value)
+        ->set('cleaning_type', CleaningType::Deep->value)
+        ->set('property_size', '3,000-5,000 sq ft')
+        ->call('submit');
+
+    $job = CleaningJob::where('customer_id', $customer->id)->sole();
+
+    expect($job->property_type)->toBe(PropertyType::Commercial);
+});
+
+test('selecting other as a pet type requires specifying what it is', function () {
+    $customer = User::factory()->customer()->create();
+    $this->actingAs($customer);
+
+    Livewire::test('pages::customer.dashboard')
+        ->set('address', '123 Test St, Philadelphia, PA 19111')
+        ->set('requested_at', now()->addDay()->format('Y-m-d\TH:i'))
+        ->set('property_type', PropertyType::Residential->value)
+        ->set('service_type', ServiceType::HouseCleaning->value)
+        ->set('frequency', JobFrequency::OneTime->value)
+        ->set('cleaning_type', CleaningType::Deep->value)
+        ->set('property_size', '1,000-3,000 sq ft')
+        ->set('has_pets', true)
+        ->set('pet_types', [PetType::Other->value])
+        ->set('pet_count', 1)
+        ->call('submit')
+        ->assertHasErrors('pet_type_other');
+
+    expect(CleaningJob::where('customer_id', $customer->id)->count())->toBe(0);
+});
+
+test('the specified other pet description is saved and shown to admin and cleaner', function () {
+    $customer = User::factory()->customer()->create();
+    $this->actingAs($customer);
+
+    Livewire::test('pages::customer.dashboard')
+        ->set('address', '123 Test St, Philadelphia, PA 19111')
+        ->set('requested_at', now()->addDay()->format('Y-m-d\TH:i'))
+        ->set('property_type', PropertyType::Residential->value)
+        ->set('service_type', ServiceType::HouseCleaning->value)
+        ->set('frequency', JobFrequency::OneTime->value)
+        ->set('cleaning_type', CleaningType::Deep->value)
+        ->set('property_size', '1,000-3,000 sq ft')
+        ->set('has_pets', true)
+        ->set('pet_types', [PetType::Other->value])
+        ->set('pet_type_other', 'Pet rabbit')
+        ->set('pet_count', 1)
+        ->call('submit')
+        ->assertHasNoErrors();
+
+    $job = CleaningJob::where('customer_id', $customer->id)->sole();
+
+    expect($job->pet_type_other)->toBe('Pet rabbit');
+
+    $admin = User::factory()->admin()->create();
+    $this->actingAs($admin);
+    $this->get(route('admin.jobs.show', $job->id))->assertSee('Other (Pet rabbit)');
+
+    $cleaner = User::factory()->cleaner()->create();
+    $job->update(['cleaner_id' => $cleaner->id, 'status' => JobStatus::Assigned]);
+    $this->actingAs($cleaner);
+    $this->get(route('cleaner.dashboard'))->assertSee('Pet rabbit');
 });
 
 test('a customer can attach property photos to a job request', function () {
@@ -49,6 +134,7 @@ test('a customer can attach property photos to a job request', function () {
         ->set('property_type', PropertyType::Residential->value)
         ->set('service_type', ServiceType::HouseCleaning->value)
         ->set('frequency', JobFrequency::OneTime->value)
+        ->set('cleaning_type', CleaningType::Deep->value)
         ->set('property_size', '1,000-3,000 sq ft')
         ->set('photos', [UploadedFile::fake()->image('kitchen.jpg'), UploadedFile::fake()->image('yard.jpg')])
         ->call('submit');
@@ -58,6 +144,73 @@ test('a customer can attach property photos to a job request', function () {
     expect($job->photos)->toHaveCount(2);
 
     Storage::disk('public')->assertExists($job->photos->first()->path);
+});
+
+test('a first-time customer is only offered deep cleaning', function () {
+    $customer = User::factory()->customer()->create();
+    $this->actingAs($customer);
+
+    $component = Livewire::test('pages::customer.dashboard');
+
+    expect($component->get('allowedCleaningTypes'))->toBe([CleaningType::Deep]);
+
+    $component
+        ->set('address', '123 Test St, Philadelphia, PA 19111')
+        ->set('requested_at', now()->addDay()->format('Y-m-d\TH:i'))
+        ->set('property_type', PropertyType::Residential->value)
+        ->set('service_type', ServiceType::HouseCleaning->value)
+        ->set('frequency', JobFrequency::OneTime->value)
+        ->set('cleaning_type', CleaningType::Soft->value)
+        ->set('property_size', '1,000-3,000 sq ft')
+        ->call('submit')
+        ->assertHasErrors('cleaning_type');
+
+    expect(CleaningJob::where('customer_id', $customer->id)->count())->toBe(0);
+});
+
+test('a customer whose last completed job was over 30 days ago is only offered deep cleaning', function () {
+    $customer = User::factory()->customer()->create();
+
+    CleaningJob::factory()->completed()->create([
+        'customer_id' => $customer->id,
+        'requested_at' => now()->subDays(45),
+    ]);
+
+    $this->actingAs($customer);
+
+    $component = Livewire::test('pages::customer.dashboard');
+
+    expect($component->get('allowedCleaningTypes'))->toBe([CleaningType::Deep]);
+});
+
+test('a repeat customer serviced within the last 30 days can select soft cleaning', function () {
+    $customer = User::factory()->customer()->create();
+
+    CleaningJob::factory()->completed()->create([
+        'customer_id' => $customer->id,
+        'requested_at' => now()->subDays(10),
+    ]);
+
+    $this->actingAs($customer);
+
+    $component = Livewire::test('pages::customer.dashboard');
+
+    expect($component->get('allowedCleaningTypes'))->toBe(CleaningType::cases());
+
+    $component
+        ->set('address', '456 Repeat Ave, Philadelphia, PA 19111')
+        ->set('requested_at', now()->addDay()->format('Y-m-d\TH:i'))
+        ->set('property_type', PropertyType::Residential->value)
+        ->set('service_type', ServiceType::HouseCleaning->value)
+        ->set('frequency', JobFrequency::Monthly->value)
+        ->set('cleaning_type', CleaningType::Soft->value)
+        ->set('property_size', '1,000-3,000 sq ft')
+        ->call('submit')
+        ->assertHasNoErrors();
+
+    $job = CleaningJob::where('customer_id', $customer->id)->where('status', JobStatus::Requested)->sole();
+
+    expect($job->cleaning_type)->toBe(CleaningType::Soft);
 });
 
 test('a job request includes a google maps link derived from the address', function () {
@@ -273,6 +426,25 @@ test('a soft-deleted cleaner is not offered in the assign dropdown and cannot be
     Notification::assertNothingSent();
 });
 
+test('admin job detail page shows pets and laundry add-on so James knows before assigning', function () {
+    $admin = User::factory()->admin()->create();
+    $customer = User::factory()->customer()->create();
+
+    $job = CleaningJob::factory()->withPets()->create([
+        'customer_id' => $customer->id,
+        'laundry_addon' => true,
+        'status' => JobStatus::Requested,
+    ]);
+
+    $this->actingAs($admin);
+
+    $response = $this->get(route('admin.jobs.show', $job->id));
+
+    $response->assertOk();
+    $response->assertSee('Laundry add-on');
+    $response->assertSee('Dog');
+});
+
 test('admin dashboard shows full job and customer detail', function () {
     $admin = User::factory()->admin()->create();
     $customer = User::factory()->customer()->create(['name' => 'Jane Homeowner']);
@@ -326,6 +498,26 @@ test('a cleaner cannot mark another cleaners job complete', function () {
         ->toThrow(ModelNotFoundException::class);
 
     expect($job->fresh()->status)->toBe(JobStatus::Assigned);
+});
+
+test('a cleaner sees pets and laundry add-on details on their assigned job', function () {
+    $cleaner = User::factory()->cleaner()->create();
+    $customer = User::factory()->customer()->create();
+
+    CleaningJob::factory()->withPets()->create([
+        'customer_id' => $customer->id,
+        'cleaner_id' => $cleaner->id,
+        'laundry_addon' => true,
+        'status' => JobStatus::Assigned,
+    ]);
+
+    $this->actingAs($cleaner);
+
+    $response = $this->get(route('cleaner.dashboard'));
+
+    $response->assertOk();
+    $response->assertSee('Laundry add-on');
+    $response->assertSee('1 pet(s)');
 });
 
 test('a cleaner never sees the customers name, phone, or email', function () {

@@ -137,7 +137,23 @@ new #[Title('Cleaner Dashboard')] class extends Component
                     </flux:heading>
                     <flux:text>
                         {{ $job['requested_at']->format('M j, Y \a\t g:i A') }} &middot; {{ $job['property_size'] }}
+                        @if ($job['cleaning_type'])
+                            &middot; {{ $job['cleaning_type']->label() }}
+                        @endif
                     </flux:text>
+                    <div class="mt-1 flex flex-wrap items-center gap-2">
+                        @if ($job['has_pets'])
+                            <flux:badge size="sm" color="zinc">
+                                {{ __(':count pet(s)', ['count' => $job['pet_count'] ?? '?']) }}
+                                @if ($job['pet_type_other'])
+                                    &middot; {{ $job['pet_type_other'] }}
+                                @endif
+                            </flux:badge>
+                        @endif
+                        @if ($job['laundry_addon'])
+                            <flux:badge size="sm" color="amber">{{ __('Laundry add-on') }}</flux:badge>
+                        @endif
+                    </div>
                     @if ($job['notes'])
                         <flux:text class="text-text/70">{{ $job['notes'] }}</flux:text>
                     @endif
