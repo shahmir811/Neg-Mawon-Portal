@@ -1,0 +1,135 @@
+{
+	"colorScheme": "light",
+	"fonts": [
+		{
+			"family": "Fraunces",
+			"role": "heading"
+		},
+		{
+			"family": "Plus Jakarta Sans",
+			"role": "body"
+		},
+		{
+			"family": "Plus Jakarta Sans",
+			"role": "display"
+		}
+	],
+	"colors": {
+		"primary": "#0B3B2E",
+		"accent": "#C89B3C",
+		"background": "#FAF7F2",
+		"textPrimary": "#1A1A1A",
+		"link": "#0B3B2E"
+	},
+	"typography": {
+		"fontFamilies": {
+			"primary": "Plus Jakarta Sans",
+			"heading": "Fraunces"
+		},
+		"fontStacks": {
+			"heading": ["Fraunces", "Georgia", "Times New Roman", "serif"],
+			"body": ["Plus Jakarta Sans", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+			"paragraph": ["Plus Jakarta Sans", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"]
+		},
+		"fontSizes": {
+			"h1": "56px",
+			"h2": "36px",
+			"body": "18px"
+		}
+	},
+	"spacing": {
+		"baseUnit": 4,
+		"borderRadius": "16px"
+	},
+	"components": {
+		"input": {
+			"background": "rgba(255,255,255,0.08)",
+			"textColor": "#FAF7F2",
+			"borderColor": "rgba(255,255,255,0.2)",
+			"borderRadius": "12px",
+			"borderRadiusCorners": {
+				"topLeft": "12px",
+				"topRight": "12px",
+				"bottomRight": "12px",
+				"bottomLeft": "12px"
+			},
+			"shadow": "none"
+		},
+		"buttonPrimary": {
+			"background": "#0B3B2E",
+			"textColor": "#FAF7F2",
+			"borderRadius": "9999px",
+			"borderRadiusCorners": {
+				"topLeft": "9999px",
+				"topRight": "9999px",
+				"bottomRight": "9999px",
+				"bottomLeft": "9999px"
+			},
+			"shadow": "0px 10px 25px rgba(11, 59, 46, 0.2)"
+		},
+		"buttonSecondary": {
+			"background": "rgba(255,255,255,0.7)",
+			"textColor": "#0B3B2E",
+			"borderColor": "rgba(11, 59, 46, 0.2)",
+			"borderRadius": "9999px",
+			"borderRadiusCorners": {
+				"topLeft": "9999px",
+				"topRight": "9999px",
+				"bottomRight": "9999px",
+				"bottomLeft": "9999px"
+			},
+			"shadow": "none"
+		}
+	},
+	"images": {
+		"logo": null,
+		"favicon": null,
+		"ogImage": null,
+		"logoHref": "/"
+	},
+	"__llm_logo_reasoning": {
+		"selectedIndex": null,
+		"reasoning": "No standalone logo image asset exists in the source HTML. The header uses a Lucide 'sparkles' icon inside a circular primary-colored (#0B3B2E) badge, paired with the 'NÃ¨g Mawon' wordmark rendered in Fraunces serif â an icon + text lockup, not an image file.",
+		"confidence": 1.0,
+		"source": "manual"
+	},
+	"__llm_button_reasoning": {
+		"primary": {
+			"index": 0,
+			"text": "Call (267) 690-1707",
+			"reasoning": "Solid primary-color (#0B3B2E) background with a heavy shadow (shadow-xl shadow-primary/20) and hover lift â the visually strongest CTA in the hero section."
+		},
+		"secondary": {
+			"index": 1,
+			"text": "Get a Free Quote",
+			"reasoning": "Translucent white background with a primary-color outline border â a lighter-weight secondary action paired next to the primary CTA in the hero."
+		},
+		"confidence": 0.95
+	},
+	"personality": {
+		"tone": "warm, family-owned, trustworthy",
+		"energy": "calm-confident",
+		"targetAudience": "Northeast Philadelphia homeowners seeking a trusted, high-quality house cleaning service"
+	},
+	"designSystem": {
+		"framework": "tailwindcss",
+		"componentLibrary": "Lucide icons + custom Tailwind components"
+	},
+	"confidence": {
+		"buttons": 0.95,
+		"colors": 1.0,
+		"overall": 0.97
+	},
+	"__llm_metadata": {
+		"logoSelection": {
+			"llmCalled": true,
+			"llmSucceeded": true,
+			"finalSource": "manual",
+			"rawLogoSelection": null
+		},
+		"buttonClassification": {
+			"llmCalled": true,
+			"llmSucceeded": true
+		}
+	}
+}
