@@ -24,7 +24,7 @@ class CleanerAssigned extends Notification
     {
         return (new MailMessage)
             ->subject('A cleaner has been assigned to your Nèg Mawon job')
-            ->greeting("Good news, {$notifiable->name}!")
+            ->greeting("Good news, {$this->job->customer->name}!")
             ->line("We've matched a cleaner to your upcoming job at {$this->job->address}.")
             ->line('You can see their photo and your job details anytime from your dashboard.')
             ->action('View my dashboard', route('customer.dashboard'))

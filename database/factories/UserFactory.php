@@ -68,6 +68,13 @@ class UserFactory extends Factory
 
     /**
      * Indicate that the model has two-factor authentication configured.
+     *
+     * No-op: this app doesn't implement Fortify's two-factor feature (out of MVP scope,
+     * no `two_factor_*` columns on `users`), so the test that calls this is always skipped
+     * via `skipUnlessFortifyHas`. Kept only so that starter-kit test keeps type-checking.
      */
-    public function withTwoFactor(): static {}
+    public function withTwoFactor(): static
+    {
+        return $this;
+    }
 }
