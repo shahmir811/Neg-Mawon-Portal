@@ -28,6 +28,7 @@ class CreateNewUser implements CreatesNewUsers
             'role' => ['nullable', 'in:'.Role::Customer->value.','.Role::Cleaner->value],
             'phone' => [$role === Role::Cleaner->value ? 'required' : 'nullable', 'string', 'max:20'],
             'photo' => [$role === Role::Cleaner->value ? 'required' : 'nullable', 'image', 'max:5120'],
+            'zip_code' => ['nullable', 'string', 'max:10'],
         ])->validate();
 
         $user = User::create([
@@ -40,6 +41,7 @@ class CreateNewUser implements CreatesNewUsers
         if ($role === Role::Cleaner->value) {
             $user->cleanerProfile()->create([
                 'phone' => $input['phone'],
+                'zip_code' => $input['zip_code'] ?? null,
                 'photo_path' => $input['photo']->store('cleaners', 'public'),
             ]);
         } else {

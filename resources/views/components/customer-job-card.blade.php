@@ -33,28 +33,24 @@
                     <flux:icon.home class="size-4 text-text/40" />
                     {{ $job['property_size'] }}
                 </span>
-                @if ($job['service_type'])
-                    <span class="inline-flex items-center gap-1.5 text-sm text-text/70">
-                        <flux:icon.sparkles class="size-4 text-text/40" />
-                        {{ $job['service_type']->label() }}
-                    </span>
-                @endif
-                @if ($job['cleaning_type'])
-                    <span class="inline-flex items-center gap-1.5 text-sm text-text/70">
-                        <flux:icon.spray-can class="size-4 text-text/40" />
-                        {{ $job['cleaning_type']->label() }}
-                    </span>
-                @endif
-                @if ($job['has_pets'])
-                    <span class="inline-flex items-center gap-1.5 text-sm text-text/70">
-                        <flux:icon.paw-print class="size-4 text-text/40" />
-                        {{ __(':count pet(s)', ['count' => $job['pet_count'] ?? '?']) }}
-                    </span>
-                @endif
-                @if ($job['laundry_addon'])
-                    <flux:badge size="sm" color="amber">{{ __('Laundry add-on') }}</flux:badge>
-                @endif
             </div>
+
+            @if ($job['service_type'] || $job['cleaning_type'] || $job['has_pets'] || $job['laundry_addon'])
+                <div class="flex flex-wrap items-center gap-1.5">
+                    @if ($job['service_type'])
+                        <flux:badge size="sm" color="zinc">{{ $job['service_type']->label() }}</flux:badge>
+                    @endif
+                    @if ($job['cleaning_type'])
+                        <flux:badge size="sm" color="zinc">{{ $job['cleaning_type']->label() }}</flux:badge>
+                    @endif
+                    @if ($job['has_pets'])
+                        <flux:badge size="sm" color="zinc">{{ __(':count pet(s)', ['count' => $job['pet_count'] ?? '?']) }}</flux:badge>
+                    @endif
+                    @if ($job['laundry_addon'])
+                        <flux:badge size="sm" color="amber">{{ __('Laundry add-on') }}</flux:badge>
+                    @endif
+                </div>
+            @endif
 
             @if ($job['notes'])
                 <flux:text class="italic text-text/70">&ldquo;{{ $job['notes'] }}&rdquo;</flux:text>
@@ -78,6 +74,10 @@
         @if ($job['status'] === \App\Enums\JobStatus::Requested)
             <flux:button size="sm" variant="ghost" :href="route('customer.jobs.edit', $job['id'])" wire:navigate>
                 {{ __('Edit') }}
+            </flux:button>
+        @else
+            <flux:button size="sm" variant="ghost" :href="route('customer.jobs.show', $job['id'])" wire:navigate>
+                {{ __('View') }}
             </flux:button>
         @endif
     </div>

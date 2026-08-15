@@ -1,77 +1,36 @@
 <?php
 
 use App\Enums\JobStatus;
+use App\Enums\PetType;
 use App\Models\CleaningJob;
-use App\Services\JobPriceCalculator;
-use Flux\Flux;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Job details')] class extends Component
+new #[Title('Job Details')] class extends Component
 {
-    public CleaningJob $job;
+    public CleaningJob $cleaningJob;
 
-    public string $finalPrice = '';
-
-    public function mount(CleaningJob $job): void
+    public function mount(int $job): void
     {
-        $job->load(['customer.customerProfile', 'cleaner', 'photos']);
-
-        $this->job = $job;
-        $this->finalPrice = (string) ($job->final_price ?? $job->estimated_price ?? '');
-    }
-
-    public function saveFinalPrice(): void
-    {
-        $this->validate(['finalPrice' => ['required', 'numeric', 'min:0']]);
-
-        $this->job->update(['final_price' => $this->finalPrice]);
-
-        Flux::toast(variant: 'success', text: __('Final price saved.'));
+        // Scoped to the authenticated customer's own jobs — a mismatched id
+        // 404s instead of leaking whether it belongs to someone else, same
+        // pattern as job-edit's mount().
+        $this->cleaningJob = Auth::user()->jobsAsCustomer()->with('photos')->findOrFail($job);
     }
 
     /**
-     * Same broad admin payload as the dashboard list (AGENTS.md Section 2 —
-     * Admin has full visibility) — just rendered on its own page instead of
-     * packed into a table row.
+     * Customer-facing payload only (AGENTS.md Section 5) — job details plus
+     * the assigned cleaner's photo, never the cleaner's name, phone, email,
+     * or ID.
      *
      * @return array<string, mixed>
      */
     #[Computed]
     public function details(): array
     {
-        return [
-            ...$this->job->toPortalArray(),
-            'customer_name' => $this->job->customer->name,
-            'customer_email' => $this->job->customer->email,
-            'customer_phone' => $this->job->customer->customerProfile?->phone,
-            'cleaner_name' => $this->job->cleaner?->name,
-        ];
-    }
-
-    /**
-     * Line-item breakdown of how the system estimate was built — recomputed
-     * from the job's current fields (not the stored estimated_price) so it
-     * always reflects whatever's in Admin > Pricing right now, even if the
-     * rates changed after this job was submitted.
-     *
-     * @return array<string, mixed>
-     */
-    #[Computed]
-    public function priceBreakdown(): array
-    {
-        return JobPriceCalculator::breakdown([
-            'property_type' => $this->job->property_type,
-            'property_size' => $this->job->property_size,
-            'bedroom_count' => $this->job->bedroom_count,
-            'bathroom_count' => $this->job->bathroom_count,
-            'cleaning_type' => $this->job->cleaning_type,
-            'has_pets' => $this->job->has_pets,
-            'pet_count' => $this->job->pet_count,
-            'laundry_addon' => $this->job->laundry_addon,
-            'frequency' => $this->job->frequency,
-        ]);
+        return $this->cleaningJob->toCustomerArray();
     }
 
     /**
@@ -82,15 +41,21 @@ new #[Title('Job details')] class extends Component
     #[Computed]
     public function mapEmbedUrl(): string
     {
-        return 'https://www.google.com/maps?q='.urlencode($this->job->address).'&output=embed';
+        return 'https://www.google.com/maps?q='.urlencode($this->cleaningJob->address).'&output=embed';
+    }
+
+    #[Computed]
+    public function backRoute(): string
+    {
+        return $this->cleaningJob->status === JobStatus::Completed ? 'customer.job-history' : 'customer.upcoming-jobs';
     }
 }
 ?>
 
 <div class="flex h-full w-full flex-1 flex-col gap-8">
     <div class="flex flex-col gap-4">
-        <flux:link :href="route('admin.dashboard')" class="inline-flex w-fit items-center gap-1 text-sm">
-            &larr; {{ __('Back to dashboard') }}
+        <flux:link :href="route($this->backRoute)" wire:navigate class="inline-flex w-fit items-center gap-1 text-sm">
+            &larr; {{ __('Back') }}
         </flux:link>
 
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -157,9 +122,9 @@ new #[Title('Job details')] class extends Component
                         <flux:text>
                             @if ($this->details['has_pets'])
                                 {{ $this->details['pet_count'] }} &middot;
-                                {{ collect($this->details['pet_types'] ?? [])->map(fn ($type) => $type === \App\Enums\PetType::Other->value && $this->details['pet_type_other']
+                                {{ collect($this->details['pet_types'] ?? [])->map(fn ($type) => $type === PetType::Other->value && $this->details['pet_type_other']
                                     ? __('Other (:description)', ['description' => $this->details['pet_type_other']])
-                                    : \App\Enums\PetType::from($type)->label())->join(', ') }}
+                                    : PetType::from($type)->label())->join(', ') }}
                             @else
                                 {{ __('No pets') }}
                             @endif
@@ -171,69 +136,27 @@ new #[Title('Job details')] class extends Component
                     <dd class="mt-1"><flux:text>{{ $this->details['laundry_addon'] ? __('Yes — bill separately') : __('No') }}</flux:text></dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Status') }}</dt>
-                    <dd class="mt-1"><flux:text>{{ ucfirst($this->details['status']->value) }}</flux:text></dd>
-                </div>
-                <div>
-                    <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Customer') }}</dt>
+                    <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Price') }}</dt>
                     <dd class="mt-1">
-                        <flux:text>{{ $this->details['customer_name'] }}</flux:text>
-                        <flux:text class="text-text/70">{{ $this->details['customer_email'] }}</flux:text>
-                        @if ($this->details['customer_phone'])
-                            <flux:text class="text-text/70">{{ $this->details['customer_phone'] }}</flux:text>
-                        @endif
+                        <flux:text>{{ $this->details['display_price'] ? '$'.$this->details['display_price'] : __('James will confirm the final price.') }}</flux:text>
                     </dd>
                 </div>
-                <div>
+                <div class="col-span-2">
                     <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Assigned cleaner') }}</dt>
-                    <dd class="mt-1"><flux:text>{{ $this->details['cleaner_name'] ?? __('Not yet assigned') }}</flux:text></dd>
+                    <dd class="mt-1 flex items-center gap-2">
+                        @if ($this->details['cleaner_photo_url'])
+                            <flux:avatar :src="$this->details['cleaner_photo_url']" size="sm" />
+                            <flux:text>{{ __('Assigned') }}</flux:text>
+                        @else
+                            <flux:text>{{ __('Not yet assigned') }}</flux:text>
+                        @endif
+                    </dd>
                 </div>
                 <div class="col-span-2">
                     <dt class="text-xs font-semibold uppercase tracking-widest text-text/60">{{ __('Notes') }}</dt>
                     <dd class="mt-1"><flux:text>{{ $this->details['notes'] ?: __('No notes provided.') }}</flux:text></dd>
                 </div>
             </dl>
-        </div>
-
-        <div class="flex flex-col gap-4 rounded-2xl border border-secondary bg-surface p-5">
-            <flux:heading class="text-primary">{{ __('Price') }}</flux:heading>
-
-            <dl class="flex flex-col gap-1.5">
-                @foreach ($this->priceBreakdown['lines'] as $line)
-                    <div class="flex items-center justify-between text-sm">
-                        <dt class="text-text/70">{{ $line['label'] }}</dt>
-                        <dd>${{ number_format($line['amount'], 2) }}</dd>
-                    </div>
-                @endforeach
-
-                <div class="flex items-center justify-between border-t border-secondary pt-1.5 text-sm">
-                    <dt class="text-text/70">{{ __('Subtotal') }}</dt>
-                    <dd>${{ number_format($this->priceBreakdown['subtotal'], 2) }}</dd>
-                </div>
-
-                @if ($this->priceBreakdown['discount_percent'] > 0)
-                    <div class="flex items-center justify-between text-sm">
-                        <dt class="text-text/70">{{ __(':percent% recurring discount', ['percent' => $this->priceBreakdown['discount_percent']]) }}</dt>
-                        <dd>-${{ number_format($this->priceBreakdown['discount_amount'], 2) }}</dd>
-                    </div>
-                @endif
-
-                <div class="flex items-center justify-between border-t border-secondary pt-1.5">
-                    <dt class="font-semibold text-primary">{{ __('System estimate') }}</dt>
-                    <dd class="font-semibold text-primary">${{ number_format($this->priceBreakdown['total'], 2) }}</dd>
-                </div>
-            </dl>
-
-            <form wire:submit="saveFinalPrice" class="flex items-end gap-2">
-                <flux:input
-                    wire:model="finalPrice"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    :label="__('Final price ($)')"
-                />
-                <flux:button type="submit" variant="primary">{{ __('Save') }}</flux:button>
-            </form>
         </div>
 
         <div class="flex flex-col gap-4 rounded-2xl border border-secondary bg-surface p-5">
@@ -257,7 +180,7 @@ new #[Title('Job details')] class extends Component
     </div>
 
     <div class="flex flex-col gap-4">
-        <flux:heading class="text-primary">{{ __('Photos from customer') }}</flux:heading>
+        <flux:heading class="text-primary">{{ __('Your photos') }}</flux:heading>
 
         @if (count($this->details['photo_urls']) > 0)
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

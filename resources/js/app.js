@@ -10,6 +10,7 @@ document.addEventListener('alpine:init', () => {
 
                 const autocomplete = new google.maps.places.Autocomplete(input, {
                     fields: ['formatted_address'],
+                    componentRestrictions: { country: 'us' },
                 });
 
                 autocomplete.addListener('place_changed', () => {

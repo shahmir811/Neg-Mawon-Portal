@@ -34,7 +34,7 @@
         required
     />
 
-    <flux:select wire:model="property_type" :label="__('Home or business type')" placeholder="Select one">
+    <flux:select wire:model.live="property_type" :label="__('Home or business type')" placeholder="Select one">
         @foreach (\App\Enums\PropertyType::cases() as $type)
             <flux:select.option value="{{ $type->value }}">{{ $type->label() }}</flux:select.option>
         @endforeach
@@ -60,6 +60,35 @@
             <flux:select.option value="5,000+ sq ft">{{ __('5,000+ sq ft') }}</flux:select.option>
             <flux:select.option value="Not sure / prefer to discuss">{{ __('Not sure / prefer to discuss') }}</flux:select.option>
         </flux:select>
+    </div>
+
+    @if ($property_type === \App\Enums\PropertyType::Residential->value)
+        <flux:input
+            type="number"
+            wire:model="bedroom_count"
+            :label="__('Bedrooms')"
+            min="0"
+            max="20"
+        />
+
+        <flux:input
+            type="number"
+            wire:model="bathroom_count"
+            :label="__('Bathrooms')"
+            min="0"
+            max="20"
+        />
+    @endif
+
+    <div>
+        <flux:select wire:model="floor_type" :label="__('Predominant floor type')" placeholder="Select one">
+            @foreach (\App\Enums\FloorType::cases() as $type)
+                <flux:select.option value="{{ $type->value }}">{{ $type->label() }}</flux:select.option>
+            @endforeach
+        </flux:select>
+        <flux:text size="sm" class="mt-1 text-text/60">
+            {{ __('Helps your cleaner bring the right equipment.') }}
+        </flux:text>
     </div>
 
     <div>

@@ -23,6 +23,7 @@ class CleanerProfileFactory extends Factory
         return [
             'user_id' => User::factory()->cleaner(),
             'phone' => fake()->phoneNumber(),
+            'zip_code' => fake()->postcode(),
             'photo_path' => null,
             'agreement_photo_path' => null,
             'agreement_signed' => false,

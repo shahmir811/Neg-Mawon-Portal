@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\CleaningType;
+use App\Enums\FloorType;
 use App\Enums\JobFrequency;
 use App\Enums\JobStatus;
 use App\Enums\PetType;
@@ -27,6 +28,9 @@ test('a customer can submit a job request', function () {
         ->set('frequency', JobFrequency::OneTime->value)
         ->set('cleaning_type', CleaningType::Deep->value)
         ->set('property_size', '1,000-3,000 sq ft')
+        ->set('bedroom_count', 3)
+        ->set('bathroom_count', 2)
+        ->set('floor_type', FloorType::Mixed->value)
         ->set('has_pets', true)
         ->set('pet_types', [PetType::Dog->value, PetType::Cat->value])
         ->set('pet_count', 2)
@@ -43,10 +47,14 @@ test('a customer can submit a job request', function () {
         ->and($job->service_type)->toBe(ServiceType::HouseCleaning)
         ->and($job->frequency)->toBe(JobFrequency::OneTime)
         ->and($job->cleaning_type)->toBe(CleaningType::Deep)
+        ->and($job->bedroom_count)->toBe(3)
+        ->and($job->bathroom_count)->toBe(2)
+        ->and($job->floor_type)->toBe(FloorType::Mixed)
         ->and($job->has_pets)->toBeTrue()
         ->and($job->pet_types)->toBe([PetType::Dog->value, PetType::Cat->value])
         ->and($job->pet_count)->toBe(2)
-        ->and($job->laundry_addon)->toBeTrue();
+        ->and($job->laundry_addon)->toBeTrue()
+        ->and((float) $job->estimated_price)->toBeGreaterThan(0);
 });
 
 test('a customer can submit a job request for a commercial property', function () {
@@ -101,6 +109,8 @@ test('the specified other pet description is saved and shown to admin and cleane
         ->set('frequency', JobFrequency::OneTime->value)
         ->set('cleaning_type', CleaningType::Deep->value)
         ->set('property_size', '1,000-3,000 sq ft')
+        ->set('bedroom_count', 2)
+        ->set('bathroom_count', 1)
         ->set('has_pets', true)
         ->set('pet_types', [PetType::Other->value])
         ->set('pet_type_other', 'Pet rabbit')
@@ -136,6 +146,8 @@ test('a customer can attach property photos to a job request', function () {
         ->set('frequency', JobFrequency::OneTime->value)
         ->set('cleaning_type', CleaningType::Deep->value)
         ->set('property_size', '1,000-3,000 sq ft')
+        ->set('bedroom_count', 3)
+        ->set('bathroom_count', 2)
         ->set('photos', [UploadedFile::fake()->image('kitchen.jpg'), UploadedFile::fake()->image('yard.jpg')])
         ->call('submit');
 
@@ -205,6 +217,8 @@ test('a repeat customer serviced within the last 30 days can select soft cleanin
         ->set('frequency', JobFrequency::Monthly->value)
         ->set('cleaning_type', CleaningType::Soft->value)
         ->set('property_size', '1,000-3,000 sq ft')
+        ->set('bedroom_count', 2)
+        ->set('bathroom_count', 1)
         ->call('submit')
         ->assertHasNoErrors();
 

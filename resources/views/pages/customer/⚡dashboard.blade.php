@@ -21,7 +21,8 @@ new #[Title('Your Dashboard')] class extends Component
 
         $this->reset([
             'address', 'requested_at', 'property_type', 'service_type', 'frequency', 'cleaning_type',
-            'property_size', 'has_pets', 'pet_types', 'pet_type_other', 'pet_count', 'laundry_addon', 'notes', 'photos',
+            'property_size', 'bedroom_count', 'bathroom_count', 'floor_type', 'has_pets', 'pet_types',
+            'pet_type_other', 'pet_count', 'laundry_addon', 'notes', 'photos',
         ]);
 
         Flux::toast(

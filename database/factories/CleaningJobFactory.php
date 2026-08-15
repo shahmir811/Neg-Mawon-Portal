@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\CleaningType;
+use App\Enums\FloorType;
 use App\Enums\JobFrequency;
 use App\Enums\JobStatus;
 use App\Enums\PetType;
@@ -35,10 +36,14 @@ class CleaningJobFactory extends Factory
             'frequency' => fake()->randomElement(JobFrequency::cases()),
             'cleaning_type' => CleaningType::Deep,
             'property_size' => fake()->randomElement(['Under 1,000 sq ft', '1,000-3,000 sq ft', '3,000-5,000 sq ft', '5,000+ sq ft']),
+            'bedroom_count' => fake()->numberBetween(1, 5),
+            'bathroom_count' => fake()->numberBetween(1, 3),
             'has_pets' => false,
             'pet_types' => [],
             'pet_count' => null,
             'laundry_addon' => false,
+            'floor_type' => fake()->randomElement(FloorType::cases()),
+            'estimated_price' => fake()->randomFloat(2, 75, 350),
             'status' => JobStatus::Requested,
         ];
     }

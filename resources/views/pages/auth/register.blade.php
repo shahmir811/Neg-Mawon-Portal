@@ -94,6 +94,14 @@
                     :label="__('Profile photo')"
                     :description="__('This is the only thing customers will ever see about you once you\'re assigned a job.')"
                 />
+
+                <flux:input
+                    name="zip_code"
+                    :label="__('Zip code (optional)')"
+                    :value="old('zip_code')"
+                    :placeholder="__('19111')"
+                    :description="__('Helps James pick a nearby cleaner when assigning jobs.')"
+                />
             </div>
 
             <div class="flex items-center justify-end">

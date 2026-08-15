@@ -24,6 +24,10 @@
                         <flux:sidebar.item icon="user-group" :href="route('admin.customers')" :current="request()->routeIs('admin.customers')" wire:navigate>
                             {{ __('Customers') }}
                         </flux:sidebar.item>
+
+                        <flux:sidebar.item icon="currency-dollar" :href="route('admin.pricing')" :current="request()->routeIs('admin.pricing')" wire:navigate>
+                            {{ __('Pricing') }}
+                        </flux:sidebar.item>
                     @endif
 
                     @if (auth()->user()->isCustomer())
