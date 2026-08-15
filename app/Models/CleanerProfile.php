@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'user_id',
     'phone',
+    'zip_code',
     'photo_path',
     'agreement_photo_path',
     'agreement_signed',

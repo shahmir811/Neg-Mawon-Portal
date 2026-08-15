@@ -42,6 +42,9 @@ new #[Title('Edit Cleaning Request')] class extends Component
         $this->frequency = $this->cleaningJob->frequency?->value ?? '';
         $this->cleaning_type = $this->cleaningJob->cleaning_type?->value ?? '';
         $this->property_size = $this->cleaningJob->property_size ?? '';
+        $this->bedroom_count = $this->cleaningJob->bedroom_count;
+        $this->bathroom_count = $this->cleaningJob->bathroom_count;
+        $this->floor_type = $this->cleaningJob->floor_type?->value ?? '';
         $this->has_pets = $this->cleaningJob->has_pets;
         $this->pet_types = $this->cleaningJob->pet_types ?? [];
         $this->pet_type_other = $this->cleaningJob->pet_type_other ?? '';

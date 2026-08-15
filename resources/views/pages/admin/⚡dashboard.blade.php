@@ -86,6 +86,7 @@ new #[Title('Admin Dashboard')] class extends Component
             ->map(fn (User $cleaner) => [
                 'id' => $cleaner->id,
                 'label' => trim($cleaner->name
+                    .($cleaner->cleanerProfile?->zip_code ? ' · '.$cleaner->cleanerProfile->zip_code : '')
                     .($cleaner->cleanerProfile?->subscription_status === SubscriptionStatus::Active ? ' · active' : ' · inactive')),
             ])
             ->all();
@@ -149,10 +150,9 @@ new #[Title('Admin Dashboard')] class extends Component
         @if (count($this->jobs) > 0)
             <flux:table>
                 <flux:table.columns>
-                    <flux:table.column>{{ __('Requested') }}</flux:table.column>
+                    <flux:table.column>{{ __('Job') }}</flux:table.column>
                     <flux:table.column>{{ __('Customer') }}</flux:table.column>
-                    <flux:table.column>{{ __('Address') }}</flux:table.column>
-                    <flux:table.column>{{ __('Property') }}</flux:table.column>
+                    <flux:table.column>{{ __('Price') }}</flux:table.column>
                     <flux:table.column>{{ __('Status') }}</flux:table.column>
                     <flux:table.column>{{ __('Cleaner') }}</flux:table.column>
                     <flux:table.column></flux:table.column>
@@ -161,24 +161,32 @@ new #[Title('Admin Dashboard')] class extends Component
                 <flux:table.rows>
                     @foreach ($this->jobs as $job)
                         <flux:table.row wire:key="job-{{ $job['id'] }}">
-                            <flux:table.cell>{{ $job['requested_at']->format('M j, Y g:i A') }}</flux:table.cell>
+                            <flux:table.cell class="max-w-xs">
+                                <flux:link :href="route('admin.jobs.show', $job['id'])" class="font-medium">
+                                    {{ $job['address'] }}
+                                </flux:link>
+                                <flux:text class="text-text/70">
+                                    {{ $job['requested_at']->format('M j, Y g:i A') }} &middot; {{ $job['property_size'] }}
+                                </flux:text>
+                                @if ($job['has_pets'] || $job['laundry_addon'])
+                                    <div class="mt-1 flex items-center gap-2">
+                                        @if ($job['has_pets'])
+                                            <flux:icon.paw-print class="size-4 text-text/40" variant="mini" />
+                                        @endif
+                                        @if ($job['laundry_addon'])
+                                            <flux:badge size="sm" color="amber">{{ __('Laundry') }}</flux:badge>
+                                        @endif
+                                    </div>
+                                @endif
+                            </flux:table.cell>
                             <flux:table.cell>
                                 {{ $job['customer_name'] }}
                                 @if ($job['customer_phone'])
                                     <flux:text class="text-text/70">{{ $job['customer_phone'] }}</flux:text>
                                 @endif
                             </flux:table.cell>
-                            <flux:table.cell>{{ $job['address'] }}</flux:table.cell>
                             <flux:table.cell>
-                                {{ $job['property_size'] }}
-                                <div class="mt-1 flex items-center gap-2">
-                                    @if ($job['has_pets'])
-                                        <flux:icon.paw-print class="size-4 text-text/40" variant="mini" />
-                                    @endif
-                                    @if ($job['laundry_addon'])
-                                        <flux:badge size="sm" color="amber">{{ __('Laundry') }}</flux:badge>
-                                    @endif
-                                </div>
+                                {{ $job['display_price'] ? '$'.$job['display_price'] : '—' }}
                             </flux:table.cell>
                             <flux:table.cell>
                                 <flux:badge :color="match ($job['status']) {
@@ -207,7 +215,7 @@ new #[Title('Admin Dashboard')] class extends Component
                             </flux:table.cell>
                             <flux:table.cell>
                                 <flux:button size="sm" variant="ghost" :href="route('admin.jobs.show', $job['id'])">
-                                    {{ __('View details') }}
+                                    {{ __('View') }}
                                 </flux:button>
                             </flux:table.cell>
                         </flux:table.row>

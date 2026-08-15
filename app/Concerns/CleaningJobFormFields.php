@@ -3,11 +3,13 @@
 namespace App\Concerns;
 
 use App\Enums\CleaningType;
+use App\Enums\FloorType;
 use App\Enums\JobFrequency;
 use App\Enums\PetType;
 use App\Enums\PropertyType;
 use App\Enums\ServiceType;
 use App\Models\CleaningJob;
+use App\Services\JobPriceCalculator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -35,6 +37,12 @@ trait CleaningJobFormFields
     public string $cleaning_type = '';
 
     public string $property_size = '';
+
+    public ?int $bedroom_count = null;
+
+    public ?int $bathroom_count = null;
+
+    public string $floor_type = '';
 
     public bool $has_pets = false;
 
@@ -65,6 +73,9 @@ trait CleaningJobFormFields
             'frequency' => ['required', Rule::enum(JobFrequency::class)],
             'cleaning_type' => ['required', Rule::in(array_map(fn (CleaningType $type) => $type->value, $this->allowedCleaningTypes()))],
             'property_size' => ['required', 'string', 'max:255'],
+            'bedroom_count' => ['nullable', 'required_if:property_type,'.PropertyType::Residential->value, 'integer', 'min:0', 'max:20'],
+            'bathroom_count' => ['nullable', 'required_if:property_type,'.PropertyType::Residential->value, 'integer', 'min:0', 'max:20'],
+            'floor_type' => ['nullable', Rule::enum(FloorType::class)],
             'has_pets' => ['boolean'],
             'pet_types' => ['nullable', 'required_if_accepted:has_pets', 'array'],
             'pet_types.*' => [Rule::enum(PetType::class)],
@@ -91,6 +102,8 @@ trait CleaningJobFormFields
             'frequency' => $validated['frequency'],
             'cleaning_type' => $validated['cleaning_type'],
             'property_size' => $validated['property_size'],
+            'bedroom_count' => $validated['bedroom_count'] ?? null,
+            'bathroom_count' => $validated['bathroom_count'] ?? null,
             'has_pets' => $validated['has_pets'],
             'pet_types' => $validated['has_pets'] ? $validated['pet_types'] : [],
             'pet_type_other' => $validated['has_pets'] && in_array(PetType::Other->value, $validated['pet_types'] ?? [], true)
@@ -98,6 +111,8 @@ trait CleaningJobFormFields
                 : null,
             'pet_count' => $validated['has_pets'] ? $validated['pet_count'] : null,
             'laundry_addon' => $validated['laundry_addon'],
+            'floor_type' => $validated['floor_type'] ?: null,
+            'estimated_price' => JobPriceCalculator::estimate($validated),
             'notes' => $validated['notes'] ?? null,
         ];
     }
@@ -135,6 +150,33 @@ trait CleaningJobFormFields
     public function allowedCleaningTypes(): array
     {
         return $this->eligibleForSoftCleaning ? CleaningType::cases() : [CleaningType::Deep];
+    }
+
+    /**
+     * A rough cost estimate computed live from the fields filled in so far
+     * — shown to the customer before they submit. James can still override
+     * the final number from the admin job page; this is a placeholder
+     * formula until he provides real pricing rules (admin.pricing has the
+     * editable numbers it draws from).
+     */
+    #[Computed]
+    public function estimatedPrice(): ?float
+    {
+        if ($this->property_type === '' || $this->property_size === '' || $this->frequency === '') {
+            return null;
+        }
+
+        return JobPriceCalculator::estimate([
+            'property_type' => $this->property_type,
+            'property_size' => $this->property_size,
+            'bedroom_count' => $this->bedroom_count,
+            'bathroom_count' => $this->bathroom_count,
+            'cleaning_type' => $this->cleaning_type,
+            'has_pets' => $this->has_pets,
+            'pet_count' => $this->pet_count,
+            'laundry_addon' => $this->laundry_addon,
+            'frequency' => $this->frequency,
+        ]);
     }
 
     /**

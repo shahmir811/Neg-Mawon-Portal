@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CleaningType;
+use App\Enums\FloorType;
 use App\Enums\JobFrequency;
 use App\Enums\JobStatus;
 use App\Enums\PropertyType;
@@ -26,11 +27,16 @@ use Illuminate\Support\Facades\Storage;
     'cleaning_type',
     'notes',
     'property_size',
+    'bedroom_count',
+    'bathroom_count',
     'has_pets',
     'pet_types',
     'pet_type_other',
     'pet_count',
     'laundry_addon',
+    'floor_type',
+    'estimated_price',
+    'final_price',
     'status',
 ])]
 class CleaningJob extends Model
@@ -50,10 +56,15 @@ class CleaningJob extends Model
             'service_type' => ServiceType::class,
             'frequency' => JobFrequency::class,
             'cleaning_type' => CleaningType::class,
+            'bedroom_count' => 'integer',
+            'bathroom_count' => 'integer',
             'has_pets' => 'boolean',
             'pet_types' => 'array',
             'pet_count' => 'integer',
             'laundry_addon' => 'boolean',
+            'floor_type' => FloorType::class,
+            'estimated_price' => 'decimal:2',
+            'final_price' => 'decimal:2',
         ];
     }
 
@@ -112,6 +123,15 @@ class CleaningJob extends Model
     }
 
     /**
+     * The price to show anyone viewing the job: James's manual override
+     * once he's set one, otherwise the system's estimate.
+     */
+    public function displayPrice(): ?string
+    {
+        return $this->final_price ?? $this->estimated_price;
+    }
+
+    /**
      * Fields safe to expose to either portal (customer or cleaner) — job
      * details only, no other party's identity. Built as a plain array rather
      * than serializing the Eloquent model so no hidden relation data can leak
@@ -131,11 +151,17 @@ class CleaningJob extends Model
             'frequency' => $this->frequency,
             'cleaning_type' => $this->cleaning_type,
             'property_size' => $this->property_size,
+            'bedroom_count' => $this->bedroom_count,
+            'bathroom_count' => $this->bathroom_count,
             'has_pets' => $this->has_pets,
             'pet_types' => $this->pet_types,
             'pet_type_other' => $this->pet_type_other,
             'pet_count' => $this->pet_count,
             'laundry_addon' => $this->laundry_addon,
+            'floor_type' => $this->floor_type,
+            'estimated_price' => $this->estimated_price,
+            'final_price' => $this->final_price,
+            'display_price' => $this->displayPrice(),
             'status' => $this->status,
             'google_maps_url' => $this->googleMapsUrl(),
             'photo_urls' => $this->photos->map(fn (CleaningJobPhoto $photo) => $photo->url())->all(),

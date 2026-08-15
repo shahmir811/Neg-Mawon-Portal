@@ -68,7 +68,9 @@ James can verify one is on file.
 ## 3. Core business rules (do not violate these when implementing)
 
 1. **Manual assignment only.** Job ↔ cleaner matching is done by James in the admin panel. Do not build
-   automatic/algorithmic matching in the MVP.
+   automatic/algorithmic matching in the MVP. (The cleaner `zip_code` field added in Phase A — see Section
+   4a — is a manual proximity hint for James only; do not build distance sorting or auto-selection on top
+   of it without revisiting this rule.)
 2. **Cleaner privacy.** A customer must never see a cleaner's name, phone number, email, or any contact
    info – only their profile photo, and only after James has assigned them to that customer's job.
 3. **No in-app e-signature.** The exclusivity agreement is signed by hand outside the app – only a *photo*
@@ -129,6 +131,35 @@ James can verify one is on file.
 - Manage all cleaners (status, subscription plan, payment status).
 - Manage all customers and their job history.
 - Basic reporting: job count, active cleaner count, subscription revenue.
+
+## 4a. Post-MVP-kickoff additions (Phase A — client feedback, 2026-08-15)
+
+James gave feedback beyond the original Section 4 scope after the MVP kickoff (pricing calculator, floor
+type, room counts, cleaner distance/zip). These are tracked separately from Section 4 rather than merged
+into it, since Section 4 is what the $800 MVP fee was quoted against (see Section 10) — everything below is
+an addition on top of that, useful context if there's a Phase B billing conversation later.
+
+- **Cost estimate calculator.** No pricing document was ever provided by James, so instead of blocking on
+  one, every job stores a system-calculated `estimated_price`, computed from admin-editable rules (base
+  fee, per-bedroom/bathroom rate, a size-band fallback rate for non-residential jobs, pet/laundry/deep-clean
+  fees, and a recurring-frequency discount) — see `App\Services\JobPriceCalculator` and
+  `App\Models\PricingSetting`. James edits the actual numbers from Admin → Pricing (`admin.pricing`) any
+  time, no code change needed. The estimate and its full line-item breakdown are admin-only, shown on the
+  job details page (`resources/views/pages/admin/⚡job.blade.php`) alongside a `final_price` field James can
+  set to override it. **Deliberately not shown to the customer** on the job request form — showing a number
+  built from placeholder rates before James confirms real ones would set a price expectation the app can't
+  honor. Only re-enable it for customers once real rates are entered into `pricing_settings`.
+- **Bedroom/bathroom counts.** Required on the job request form only when `property_type` is Residential;
+  non-residential jobs (commercial, church, restaurant, office, retail, other) still price off the
+  `property_size` band instead.
+- **Floor type** (carpet / hardwood-tile / mixed). Equipment-prep info shown to the assigned cleaner; not
+  currently a pricing input.
+- **Cleaner zip code** (`cleaner_profiles.zip_code`, optional). James wants to assign the closest cleaner to
+  a job. This is a **manual hint only** — shown as plain text next to each cleaner's name on the admin
+  assign-cleaner dropdown and the Cleaners List so James can judge proximity himself. There is no distance
+  calculation, sorting, or automatic selection built on it — that would cross into automated job-to-cleaner
+  matching, which Section 3 rule 1 forbids. If the client explicitly asks for real distance sorting later,
+  treat that as a deliberate scope decision to revisit, not something to add quietly.
 
 ## 5. Privacy rule (critical, re-stated)
 
@@ -217,20 +248,27 @@ cleanly on ordinary PHP shared hosting.
 
 ```
 users            { id, role[admin|cleaner|customer], name, email, password, created_at }
-cleaner_profiles { id, user_id, phone, photo_path, agreement_photo_path, agreement_signed:boolean,
-                   subscription_plan[monthly|annual], subscription_status, stripe_id, stripe_status,
-                   next_renewal_at }
+cleaner_profiles { id, user_id, phone, zip_code(nullable), photo_path, agreement_photo_path,
+                   agreement_signed:boolean, subscription_plan[monthly|annual], subscription_status,
+                   stripe_id, stripe_status, next_renewal_at }
 customer_profiles{ id, user_id, phone }
 jobs             { id, customer_id, cleaner_id(nullable), address, requested_at, notes, property_size,
+                   bedroom_count(nullable), bathroom_count(nullable),
                    property_type[residential|commercial|church|restaurant|office|retail|other],
                    service_type, frequency, cleaning_type[deep|soft], has_pets:boolean, pet_types:json,
                    pet_type_other(nullable), pet_count(nullable), laundry_addon:boolean,
-                   status[requested|assigned|completed], created_at }
+                   floor_type[carpet|hard_floor|mixed](nullable), estimated_price(nullable),
+                   final_price(nullable), status[requested|assigned|completed], created_at }
+pricing_settings { id, base_flat_fee, per_bedroom_rate, per_bathroom_rate, base_rates_by_size:json,
+                   pet_fee_per_pet, laundry_fee, deep_cleaning_surcharge, frequency_discounts:json }
 ```
 
 This is a starting point, not a locked schema – refine as needed during Phase 1. (The columns above beyond
 `property_size`/`notes` were added post-MVP-kickoff, after a client call requested richer service-detail
-capture — see the `CleaningType`, `PropertyType`, `PetType` enums under `app/Enums/`.)
+capture — see the `CleaningType`, `PropertyType`, `PetType` enums under `app/Enums/`. The
+`bedroom_count`/`bathroom_count`/`floor_type`/`estimated_price`/`final_price` columns on `jobs`, `zip_code`
+on `cleaner_profiles`, and the `pricing_settings` table were added later still, in Phase A — see Section
+4a.)
 
 ## 8a. Design system (from client-approved landing page)
 

@@ -17,6 +17,7 @@ new #[Title('Profile settings')] class extends Component {
 
     public string $name = '';
     public string $email = '';
+    public string $zip_code = '';
 
     /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null */
     public $photo = null;
@@ -31,6 +32,7 @@ new #[Title('Profile settings')] class extends Component {
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->zip_code = Auth::user()->cleanerProfile?->zip_code ?? '';
     }
 
     /**
@@ -74,6 +76,21 @@ new #[Title('Profile settings')] class extends Component {
         $this->reset('photo');
 
         Flux::toast(variant: 'success', text: __('Profile photo updated.'));
+    }
+
+    /**
+     * Zip code is just a proximity hint for James when he's manually
+     * picking a cleaner to assign — not used for any automated matching.
+     */
+    public function updateZipCode(): void
+    {
+        abort_unless(Auth::user()->isCleaner(), 403);
+
+        $this->validate(['zip_code' => ['nullable', 'string', 'max:10']]);
+
+        Auth::user()->cleanerProfile->update(['zip_code' => $this->zip_code]);
+
+        Flux::toast(variant: 'success', text: __('Zip code updated.'));
     }
 
     /**
@@ -231,6 +248,20 @@ new #[Title('Profile settings')] class extends Component {
                         </flux:button>
                     </form>
                 </div>
+            </div>
+
+            <div class="my-6 w-full space-y-4 border-t border-secondary pt-6">
+                <div>
+                    <flux:heading>{{ __('Service area') }}</flux:heading>
+                    <flux:text class="text-text/70">
+                        {{ __('Optional — helps James pick a nearby cleaner when assigning jobs.') }}
+                    </flux:text>
+                </div>
+
+                <form wire:submit="updateZipCode" class="flex items-end gap-3">
+                    <flux:input wire:model="zip_code" :label="__('Zip code')" placeholder="19111" class="max-w-xs" />
+                    <flux:button type="submit" variant="primary" size="sm">{{ __('Save') }}</flux:button>
+                </form>
             </div>
 
             <div class="my-6 w-full space-y-4 border-t border-secondary pt-6">

@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('jobs/{job}', 'pages::admin.job')->name('jobs.show');
         Route::livewire('cleaners', 'pages::admin.cleaners')->name('cleaners');
         Route::livewire('customers', 'pages::admin.customers')->name('customers');
+        Route::livewire('pricing', 'pages::admin.pricing')->name('pricing');
     });
 
     Route::middleware('role:cleaner')->prefix('cleaner')->name('cleaner.')->group(function () {
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('/', 'pages::customer.dashboard')->name('dashboard');
         Route::livewire('upcoming-jobs', 'pages::customer.upcoming-jobs')->name('upcoming-jobs');
         Route::livewire('job-history', 'pages::customer.job-history')->name('job-history');
+        Route::livewire('jobs/{job}', 'pages::customer.job-show')->name('jobs.show');
         Route::livewire('jobs/{job}/edit', 'pages::customer.job-edit')->name('jobs.edit');
     });
 });

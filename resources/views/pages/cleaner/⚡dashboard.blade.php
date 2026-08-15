@@ -142,6 +142,9 @@ new #[Title('Cleaner Dashboard')] class extends Component
                         @endif
                     </flux:text>
                     <div class="mt-1 flex flex-wrap items-center gap-2">
+                        @if ($job['floor_type'])
+                            <flux:badge size="sm" color="zinc">{{ $job['floor_type']->label() }}</flux:badge>
+                        @endif
                         @if ($job['has_pets'])
                             <flux:badge size="sm" color="zinc">
                                 {{ __(':count pet(s)', ['count' => $job['pet_count'] ?? '?']) }}

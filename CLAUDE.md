@@ -12,7 +12,9 @@ photo – nothing else about them.
 
 ## Non-negotiable rules (see AGENTS.md Sections 3 & 5 for full detail)
 
-- **No automated job-to-cleaner matching.** Assignment is a manual admin action.
+- **No automated job-to-cleaner matching.** Assignment is a manual admin action. The cleaner `zip_code`
+  field (Phase A, item 9 below) is a manual proximity hint shown to James only — never build distance
+  sorting or auto-selection on top of it.
 - **No cleaner PII ever reaches the customer side.** Only the assigned cleaner's photo. Enforce this in
   the API/query layer, not just hidden in the UI.
 - **No in-app e-signature.** The exclusivity agreement is signed by hand outside the app; only a *photo* of
@@ -115,6 +117,41 @@ photo – nothing else about them.
      it naturally disappears the instant a job is assigned.
    - Photo editing is add-only in both create and edit — customers can attach more photos, but there's no
      UI to remove ones already uploaded. Don't assume photo removal exists without checking.
+   - Once a job is `Assigned` or `Completed` (no longer editable), the customer-job-card's action slot swaps
+     the Edit button for a **View** button (`route('customer.jobs.show', $job['id'])`,
+     `resources/views/pages/customer/⚡job-show.blade.php`) — a read-only detail page, not a second edit
+     surface. It mirrors the admin job-detail page's layout (full field breakdown, embedded map, photos) but
+     scopes the lookup to `Auth::user()->jobsAsCustomer()->findOrFail($job)` and renders
+     `CleaningJob::toCustomerArray()`, so it's subject to the same no-PII rule as everywhere else on the
+     customer side — only the assigned cleaner's photo, never their name/phone/email. Shared by both
+     Upcoming Jobs (Assigned) and Job History (Completed) since they render the same card component.
+9. **Phase A additions (AGENTS.md Section 4a)** — pricing calculator, floor type, bedroom/bathroom counts,
+   and cleaner zip code, all added from client feedback after the original MVP kickoff:
+   - **Pricing.** `App\Services\JobPriceCalculator` (`estimate()` and `breakdown()`) computes a job's price
+     off admin-editable rules in `App\Models\PricingSetting` (a singleton row via `PricingSetting::current()`
+     — no pricing document was ever provided, so it ships with placeholder numbers James edits from
+     Admin → Pricing, `resources/views/pages/admin/⚡pricing.blade.php` / `admin.pricing` route). The result
+     is stored on every job as `estimated_price` (`CleaningJobFormFields::cleaningJobAttributes()`), and
+     `resources/views/pages/admin/⚡job.blade.php` shows the full line-item breakdown plus a `final_price`
+     field James can save to override it — `CleaningJob::displayPrice()` always prefers `final_price` over
+     `estimated_price` wherever a job's price is shown. **This is admin-only.** The trait still has an
+     `estimatedPrice` `#[Computed]` property, but the customer-facing partial
+     (`resources/views/partials/customer-job-form-fields.blade.php`) deliberately doesn't render it — showing
+     a number built from placeholder rates before James confirms real ones would set a price expectation the
+     app can't honor. Don't re-wire it into the customer view without checking real rates are in
+     `pricing_settings` first.
+   - **Bedroom/bathroom counts.** `bedroom_count`/`bathroom_count` on `cleaning_jobs` are required in
+     `CleaningJobFormFields::rules()` only when `property_type` is Residential (`required_if`); the
+     calculator falls back to the `property_size`-band rate for every other property type.
+   - **Floor type.** `App\Enums\FloorType` (carpet / hard_floor / mixed), optional, shown to the assigned
+     cleaner as equipment-prep info on their dashboard. Not a pricing input.
+   - **Cleaner zip code.** `cleaner_profiles.zip_code`, optional, set at registration or later from
+     Settings → Profile (`updateZipCode()` in `resources/views/pages/settings/⚡profile.blade.php`). Shown as
+     plain text next to each cleaner's name in the admin assign-cleaner dropdown
+     (`resources/views/pages/admin/⚡dashboard.blade.php`, `cleaners()`) and the Cleaners List — a manual
+     hint for James to judge proximity himself, not a distance calculation. See the non-negotiable rule
+     above before building anything that sorts or auto-selects on this field.
+   - Tests for all of the above live in `tests/Feature/PricingTest.php`.
 
 ## When something is ambiguous
 

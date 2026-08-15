@@ -89,6 +89,7 @@ new #[Title('Cleaners')] class extends Component
                 'name' => $cleaner->name,
                 'email' => $cleaner->email,
                 'phone' => $cleaner->cleanerProfile?->phone,
+                'zip_code' => $cleaner->cleanerProfile?->zip_code,
                 'photo_url' => $cleaner->cleanerProfile?->photo_path
                     ? Storage::url($cleaner->cleanerProfile->photo_path)
                     : null,
@@ -154,6 +155,9 @@ new #[Title('Cleaners')] class extends Component
                             {{ $cleaner['email'] }}
                             @if ($cleaner['phone'])
                                 <flux:text class="text-text/70">{{ $cleaner['phone'] }}</flux:text>
+                            @endif
+                            @if ($cleaner['zip_code'])
+                                <flux:text class="text-text/70">{{ $cleaner['zip_code'] }}</flux:text>
                             @endif
                         </flux:table.cell>
                         <flux:table.cell>
