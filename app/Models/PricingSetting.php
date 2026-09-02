@@ -43,19 +43,19 @@ class PricingSetting extends Model
     public static function current(): self
     {
         return static::query()->firstOrCreate(['id' => 1], [
-            'base_flat_fee' => 75,
-            'per_bedroom_rate' => 15,
-            'per_bathroom_rate' => 10,
+            'base_flat_fee' => 100,
+            'per_bedroom_rate' => 25,
+            'per_bathroom_rate' => 20,
             'base_rates_by_size' => [
-                'Under 1,000 sq ft' => 80,
-                '1,000-3,000 sq ft' => 130,
-                '3,000-5,000 sq ft' => 200,
-                '5,000+ sq ft' => 280,
-                'Not sure / prefer to discuss' => 130,
+                'Under 1,000 sq ft' => 110,
+                '1,000-3,000 sq ft' => 175,
+                '3,000-5,000 sq ft' => 265,
+                '5,000+ sq ft' => 375,
+                'Not sure / prefer to discuss' => 175,
             ],
             'pet_fee_per_pet' => 10,
             'laundry_fee' => 20,
-            'deep_cleaning_surcharge' => 30,
+            'deep_cleaning_surcharge' => 80,
             'frequency_discounts' => [
                 'one_time' => 0,
                 'weekly' => 15,
