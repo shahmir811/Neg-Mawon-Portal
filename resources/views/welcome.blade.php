@@ -37,7 +37,7 @@
                     <span class="flex h-9 w-9 items-center justify-center rounded-full bg-primary">
                         <flux:icon.sparkles class="size-5 text-gold" />
                     </span>
-                    <span class="text-xl font-semibold tracking-tight text-primary">Nèg Mawon</span>
+                    <span class="text-xl font-semibold tracking-tight text-primary">NGM Cleaning</span>
                 </a>
 
                 <div class="hidden items-center gap-8 md:flex">
@@ -122,7 +122,7 @@
                     </h1>
 
                     <p class="mt-8 max-w-2xl text-lg leading-relaxed text-text/75 md:text-xl">
-                        Nèg Mawon Cleaning Services is Northeast Philly's trusted 5-star house cleaning team – offering standard cleans, deep cleans, house clearance, and professional organizing for busy Philadelphia families.
+                        NGM Cleaning Services is Northeast Philly's trusted 5-star house cleaning team – offering standard cleans, deep cleans, house clearance, and professional organizing for busy Philadelphia families.
                     </p>
 
                     <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
@@ -147,7 +147,7 @@
                         <div class="relative overflow-hidden rounded-3xl border border-white/60 shadow-2xl">
                             <img
                                 src="https://zgnpmogdjnnhpwewavnr.supabase.co/storage/v1/object/public/project-images/6aeb0c72-051a-4b62-aa01-435fcb5871fe/da9c7a5f-9714-4e81-9dbd-846fac18696d.png"
-                                alt="Bright, sunlit, spotlessly cleaned Philadelphia row home living room with polished hardwood floors and pristine furniture after professional cleaning by Nèg Mawon Cleaning Services"
+                                alt="Bright, sunlit, spotlessly cleaned Philadelphia row home living room with polished hardwood floors and pristine furniture after professional cleaning by NGM Cleaning Services"
                                 class="h-auto w-full object-cover"
                                 loading="eager"
                             >
@@ -207,7 +207,7 @@
                             <div class="absolute -left-6 -top-6 -z-10 h-32 w-32 rounded-3xl bg-gold/40"></div>
                             <img
                                 src="https://zgnpmogdjnnhpwewavnr.supabase.co/storage/v1/object/public/project-images/6aeb0c72-051a-4b62-aa01-435fcb5871fe/34b5ced2-6473-45a0-b24b-612534982133.png"
-                                alt="Friendly Haitian-American cleaning team from Nèg Mawon smiling in a bright Philadelphia home"
+                                alt="Friendly Haitian-American cleaning team from NGM Cleaning smiling in a bright Philadelphia home"
                                 class="relative h-auto w-full rounded-3xl shadow-2xl"
                             >
                             <div class="absolute -bottom-6 -right-6 -z-10 h-32 w-32 rounded-3xl bg-primary"></div>
@@ -216,7 +216,7 @@
                     <div class="animate-on-scroll order-1 lg:order-2">
                         <span class="mb-5 inline-block rounded-full bg-background px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Our Story</span>
                         <h2 class="mb-6 text-4xl font-medium leading-[1.05] tracking-tight text-primary md:text-5xl lg:text-6xl">A family name rooted in freedom.</h2>
-                        <p class="mb-5 text-lg leading-relaxed text-text/85"><em class="font-semibold not-italic text-primary">"Nèg Mawon"</em> is a proud Haitian symbol of freedom – the maroon who broke chains and lived on his own terms. That spirit is stitched into everything we do.</p>
+                        <p class="mb-5 text-lg leading-relaxed text-text/85">NGM takes its name from <em class="font-semibold not-italic text-primary">"Nèg Mawon"</em> – a proud Haitian symbol of freedom – the maroon who broke chains and lived on his own terms. That spirit is stitched into everything we do.</p>
                         <p class="mb-8 text-lg leading-relaxed text-text/75">We're a Haitian-American, family-run business proudly serving Northeast Philadelphia. Every home we clean, we treat like our grandmother's parlor – with warmth, respect, and honest work. No shortcuts. No surprises. Just spotless.</p>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="flex items-start gap-3">
@@ -295,7 +295,7 @@
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                     @foreach ([
                         ['initials' => 'MJ', 'quote' => 'I\'ve never had a cleaning team leave my Rhawnhurst rowhome looking THIS good. Baseboards, oven, ceiling fans – everything sparkled. Truly a 5-star experience.', 'name' => 'Maria J.', 'location' => 'Rhawnhurst, PA'],
-                        ['initials' => 'DP', 'quote' => 'Booked a deep clean before my mom moved in. The Nèg Mawon team was warm, punctual, and thorough. My kitchen actually smells like lemon now. Highly recommend!', 'name' => 'Devon P.', 'location' => 'Fox Chase, PA'],
+                        ['initials' => 'DP', 'quote' => 'Booked a deep clean before my mom moved in. The NGM Cleaning team was warm, punctual, and thorough. My kitchen actually smells like lemon now. Highly recommend!', 'name' => 'Devon P.', 'location' => 'Fox Chase, PA'],
                         ['initials' => 'AS', 'quote' => 'Hired them for a full house clearance after my dad passed. They handled everything with dignity, care, and hard work. A blessing to our family. Thank you.', 'name' => 'Angela S.', 'location' => 'Bustleton, PA'],
                     ] as $index => $review)
                         <div class="animate-on-scroll rounded-3xl border border-primary/10 bg-background/70 p-8 backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $index * 100 }}ms;">
@@ -468,7 +468,7 @@
 
                     <div class="lg:col-span-1">
                         <div class="mb-5">
-                            <h3 class="mb-1 text-2xl text-background">Nèg Mawon</h3>
+                            <h3 class="mb-1 text-2xl text-background">NGM Cleaning</h3>
                             <p class="text-xs font-semibold uppercase tracking-widest text-gold">Cleaning Services LLC</p>
                         </div>
                         <p class="mb-6 text-sm leading-relaxed text-secondary/75">
@@ -529,7 +529,7 @@
 
                 <div class="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 md:flex-row">
                     <p class="text-xs text-secondary/50">
-                        &copy; {{ now()->year }} Nèg Mawon Cleaning Services LLC. All rights reserved.
+                        &copy; {{ now()->year }} NGM Cleaning Services LLC. All rights reserved.
                     </p>
                     <p class="flex items-center gap-2 text-xs text-secondary/50">
                         <span>Made with</span>

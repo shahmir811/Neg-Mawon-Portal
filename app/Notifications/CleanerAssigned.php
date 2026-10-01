@@ -23,11 +23,11 @@ class CleanerAssigned extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('A cleaner has been assigned to your Nèg Mawon job')
+            ->subject('A cleaner has been assigned to your NGM Cleaning job')
             ->greeting("Good news, {$this->job->customer->name}!")
             ->line("We've matched a cleaner to your upcoming job at {$this->job->address}.")
             ->line('You can see their photo and your job details anytime from your dashboard.')
             ->action('View my dashboard', route('customer.dashboard'))
-            ->line('Thank you for trusting Nèg Mawon Cleaning Services with your home.');
+            ->line('Thank you for trusting NGM Cleaning Services with your home.');
     }
 }

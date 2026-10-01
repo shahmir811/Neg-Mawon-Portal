@@ -25,7 +25,7 @@ class ContactFormSubmitted extends Notification
     {
         return (new MailMessage)
             ->subject("New quote request from {$this->senderName}")
-            ->greeting('New lead from the Nèg Mawon website')
+            ->greeting('New lead from the NGM Cleaning website')
             ->line("**Name:** {$this->senderName}")
             ->line("**Email:** {$this->senderEmail}")
             ->line('**Message:**')
