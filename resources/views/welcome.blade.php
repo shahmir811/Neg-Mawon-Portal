@@ -4,12 +4,6 @@
         @include('partials.head', ['title' => 'Trusted House Cleaning in Northeast Philadelphia'])
 
         <style>
-            @media (prefers-reduced-motion: no-preference) {
-                html {
-                    scroll-behavior: smooth;
-                }
-            }
-
             .animate-on-scroll {
                 opacity: 0;
                 transform: translateY(20px);
@@ -428,6 +422,18 @@
                                 </div>
 
                                 <div>
+                                    <label for="phone" class="mb-2 block text-xs font-semibold uppercase tracking-widest text-gold">Phone Number</label>
+                                    <input
+                                        type="tel" id="phone" name="phone" required value="{{ old('phone') }}"
+                                        class="w-full rounded-xl border border-white/20 bg-white/8 px-5 py-4 text-background placeholder:text-background/40 backdrop-blur-xl transition-all focus:outline-none focus:ring-2 focus:ring-gold"
+                                        placeholder="(267) 555-0123"
+                                    >
+                                    @error('phone')
+                                        <p class="mt-2 text-sm text-rose-300">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
                                     <label for="message" class="mb-2 block text-xs font-semibold uppercase tracking-widest text-gold">Tell Us About Your Home</label>
                                     <textarea
                                         id="message" name="message" rows="5" required
@@ -542,7 +548,21 @@
 
         <script>
             (function () {
-                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                document.querySelectorAll('a[href^="#"]').forEach((link) => {
+                    link.addEventListener('click', (event) => {
+                        const target = document.querySelector(link.getAttribute('href'));
+                        if (!target) {
+                            return;
+                        }
+
+                        event.preventDefault();
+                        target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+                    });
+                });
+
+                if (reduceMotion) {
                     document.querySelectorAll('.animate-on-scroll').forEach((el) => el.classList.add('visible'));
                     return;
                 }
