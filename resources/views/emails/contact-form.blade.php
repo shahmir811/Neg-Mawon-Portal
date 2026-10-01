@@ -19,7 +19,7 @@
 <table role="presentation" cellpadding="0" cellspacing="0">
 <tr>
 <td style="width:36px; height:36px; background-color:#C89B3C; border-radius:999px; text-align:center; vertical-align:middle; font-size:16px;">&#10024;</td>
-<td style="padding-left:10px; font-family: Georgia, 'Times New Roman', serif; font-size:20px; color:#FAF7F2; font-weight:600;">N&egrave;g Mawon</td>
+<td style="padding-left:10px; font-family: Georgia, 'Times New Roman', serif; font-size:20px; color:#FAF7F2; font-weight:600;">NGM Cleaning</td>
 </tr>
 </table>
 </td>
