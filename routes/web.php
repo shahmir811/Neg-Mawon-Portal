@@ -22,6 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('cleaners', 'pages::admin.cleaners')->name('cleaners');
         Route::livewire('customers', 'pages::admin.customers')->name('customers');
         Route::livewire('pricing', 'pages::admin.pricing')->name('pricing');
+        Route::livewire('backups', 'pages::admin.backups')->name('backups');
     });
 
     Route::middleware('role:cleaner')->prefix('cleaner')->name('cleaner.')->group(function () {

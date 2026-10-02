@@ -230,14 +230,24 @@ cleanly on ordinary PHP shared hosting.
   `add_soft_deletes_to_users_table` migration). `ProfileValidationRules::emailRules()` also excludes trashed
   rows from the app-level uniqueness check via `Rule::unique(...)->withoutTrashed()`.
 - **Database:** MySQL – universally available on shared hosting, no extra config needed with Laravel.
-- **File storage:** Laravel's filesystem abstraction (`Storage` facade) for profile photos and the admin-
-  uploaded agreement photos. Start on the `public` local disk (fine for shared hosting); the abstraction
-  means swapping to an S3-compatible disk later requires no code changes, just config.
+- **File storage: now on S3** (done 2026-10-02 — Section 12 has full detail; this bullet originally said
+  "start on local disk," which has been superseded). Two buckets in one AWS account: `ngmcleaning-dev`
+  (local/dev) and `ngmcleaning-prod` (production), both with Block Public Access on and ACLs disabled —
+  nothing is served via a plain public URL. The `public` filesystem disk (`config/filesystems.php`) is now
+  driver-switchable via `FILESYSTEM_PUBLIC_DRIVER` (`local` or `s3`); every existing upload call site
+  (`store('x', 'public')`) was left untouched — only the disk definition changed. Reads go through
+  `App\Support\StorageUrl::for($path)`, which generates a 30-minute signed temporary URL on S3
+  (`providesTemporaryUrls()`) and falls back to a plain URL on the local disk — this replaced every
+  `Storage::url(...)` call site (the `CleaningJob`, `User`, and `CleaningJobPhoto` models; the admin
+  Cleaners List; Settings → Profile).
 - **Payments:** Laravel Cashier (Stripe) for cleaner subscriptions – two Stripe Price objects (monthly $25,
   annual $225), Cashier webhook handling keeps subscription status in sync automatically.
-- **Notifications:** Laravel's built-in Mail/Notification system for the "cleaner assigned" email to
-  customers – use whatever SMTP/API mail provider the shared host supports (or a low-cost API provider like
-  Mailgun/Resend if the host's SMTP is unreliable).
+- **Notifications:** Resend is the decided mail provider (`MAIL_MAILER=resend`, `RESEND_API_KEY` in `.env`,
+  `resend/resend-php` installed). As of this writing it's only wired up for the public landing-page contact
+  form (`App\Mail\ContactFormReceived`, a fully custom branded HTML template at
+  `resources/views/emails/contact-form.blade.php` — not Laravel's default Markdown mail styling) — see
+  Section 12. The Section 4 "cleaner assigned" customer-facing notification is still not built; reuse this
+  same Resend setup for it.
 - **Icons:** Lucide (already used in the landing-page reference) – either the Blade Lucide package or the
   CDN script, matching the reference file.
 - **Hosting:** Shared PHP hosting to start (confirm PHP version support, Composer/SSH access, and a cron
@@ -399,8 +409,17 @@ different icon or generate a logo image.
 
 - **Tone:** warm, family-owned, trustworthy.
 - **Energy:** calm-confident – not hypey or high-pressure.
-- **Target audience:** Northeast Philadelphia homeowners seeking a trusted, high-quality house cleaning
-  service.
+- **Target audience (updated 2026-10-02, client feedback — see Section 12):** homeowners, businesses, and
+  organizations across Pennsylvania, New Jersey, and Delaware — broadened from the original
+  Northeast-Philadelphia-only positioning. Updated in `resources/views/welcome.blade.php` and the auth-page
+  side panel (`resources/views/layouts/auth/split.blade.php`). The physical office address (7135 Rising Sun
+  Ave, Philadelphia, Section 1) is unchanged – it's still the real HQ, just no longer stated as a service-area
+  limit.
+- **Haitian-American ownership/heritage framing removed** (same client feedback round): the "Our Story"
+  section's "Nèg Mawon" origin narrative, the Haitian-American hero/footer tags, and related image alt text
+  were all pulled. The company name itself stays "NGM Cleaning." A **professionalism-first brand voice
+  rewrite** was explicitly requested by the client but **deferred, not yet built** – the warm/family-run tone
+  described below is still current until that's revisited; don't assume it's been replaced.
 - Carry this tone into all in-app copy (empty states, confirmation messages, emails), not just marketing
   copy – e.g. the "cleaner assigned" email notification (Section 4) should read as warm and reassuring, not
   transactional/robotic.
@@ -443,6 +462,99 @@ but useful context for why the timeline and scope are kept tight.
   default Tailwind/Livewire styling.
 - When in doubt about a product decision not covered here, default to the simplest option that satisfies
   the MVP scope in Section 4 – this project intentionally avoids automation, messaging, and ratings in v1.
+
+## 12. Phase B additions (contact form, S3 storage, backups — client feedback round 2, 2026-10-01/02)
+
+A second round of client feedback and infra requests came in after Phase A (Section 4a), mostly unrelated to
+the core booking-portal feature set. Tracked here for the same reason as Section 4a – none of this was part
+of the original $800 MVP scope quoted against Section 4.
+
+### Landing page contact form
+
+- Added a required `phone` field alongside name/email/message (`resources/views/welcome.blade.php`,
+  `App\Http\Controllers\ContactController`, validated server-side on every submit).
+- Submissions email a fully custom branded HTML template (`App\Mail\ContactFormReceived`,
+  `resources/views/emails/contact-form.blade.php`) via Resend – not Laravel's default Markdown `MailMessage`
+  styling. Reply-To is set to the submitter's own email, and the template includes a "Reply to [Name]"
+  `mailto:` button.
+- Current recipients: `ngmcleaning2026@gmail.com`, `jnguillaume4@gmail.com`, `jldajeune@gmail.com` (set in
+  `ContactController::store()` – the client explicitly removed `bookings@ngmcleaning.com` from this list; it
+  remains the `MAIL_FROM_ADDRESS` emails send *from*, just not a recipient).
+- Fixed a UX bug where submitting the form caused a visible double-scroll (page loads at the top, then jumps
+  to `#contact`): the cause was global `scroll-behavior: smooth` CSS animating the browser's native anchor
+  landing after the POST-redirect. Fixed by removing that global rule and adding a click-only smooth-scroll
+  JS handler for in-page anchor links instead – the post-submit redirect now lands instantly, no animation.
+
+### Brand/geography copy changes
+
+See the Section 8a "Brand voice & personality" update above for the full detail (heritage framing removed,
+service area broadened to PA/NJ/DE, professionalism rewrite requested but deferred).
+
+**Flagged, not resolved:** the client's feedback also mentioned "a private two-sided marketplace," which may
+describe something structurally different from what's actually built (manual admin-mediated assignment –
+Section 3 rule 1 forbids self-serve/algorithmic matching). This was surfaced back to the client as a
+clarifying question, not yet answered as of this writing. Don't assume either interpretation (cosmetic
+language vs. real scope change) if this resurfaces – confirm with the client first.
+
+### File storage on S3
+
+See the Section 8 "File storage" update above for the technical detail. Summary: two private buckets
+(`ngmcleaning-dev`, `ngmcleaning-prod`, region `ap-southeast-2`), an IAM user (`ngm-cleaning-app`) scoped to
+only those two buckets rather than the AWS root/console user, and access exclusively via signed temporary
+URLs (`App\Support\StorageUrl`) – never plain public URLs, since the buckets block all public access by
+design. Two non-obvious gotchas hit and fixed, worth knowing if this needs touching again:
+
+- The `root` config key means "local folder" for the `local` driver but becomes a bucket key-prefix for
+  `s3` – it must be an empty string on s3, not `storage_path(...)`, or uploads land under a garbage key built
+  from the server's absolute filesystem path.
+- `visibility: public` tries to set a `public-read` ACL on every upload, which S3 silently rejects (with
+  `throw: false` swallowing the failure) since the buckets have ACLs disabled by design (bucket-owner-
+  enforced). Only apply `visibility: public` for the `local` driver.
+
+Local/dev currently has `FILESYSTEM_PUBLIC_DRIVER=s3` set, meaning local development uploads really do hit
+the real `ngmcleaning-dev` bucket, not local disk.
+
+### Database backups
+
+- `spatie/laravel-backup` installed, configured to dump the database only (`--only-db`, no application
+  files) and upload to the `s3` disk – same AWS account/credentials as the file storage above, same
+  bucket-per-environment split, separate from the `public` disk config.
+- Backup S3 key format: `ngm-cleaning/ngm-cleaning-db-backup-{Y-m-d-H-i-s}.zip` (`config/backup.php`
+  `backup.name` + `destination.filename_prefix`).
+- Scheduled in `routes/console.php`, **production environment only** (`->environments(['production'])`, so
+  nothing fires on local/dev automatically): `backup:run --only-db` every 6 hours, `backup:clean` on the
+  first Sunday of each month (`cron('0 0 1-7 * 0')`). Trigger a dev backup manually with
+  `php artisan backup:run --only-db`, or from the admin UI below.
+- Retention: a flat 30-day cutoff, no tiered daily/weekly/monthly thinning
+  (`cleanup.default_strategy` in `config/backup.php` – `keep_all_backups_for_days: 30`, every other tier set
+  to `0`). `backup:clean` only ever deletes files inside the `ngm-cleaning/` folder prefix – cleaner/job/
+  agreement photos live in separate top-level folders in the same bucket and are never touched by it.
+- Default Spatie email notifications (backup success/failure) are disabled in config – out of the box they
+  pointed at a placeholder address. Not wired to a real inbox; ask before enabling.
+- **Admin UI**: `/admin/backups` (`resources/views/pages/admin/⚡backups.blade.php`, admin-only, sidebar link
+  added) – lists backups newest-first with size/date, a "Back up now" button that runs `backup:run --only-db`
+  synchronously and toasts success/failure, and a per-backup Delete button behind a confirmation modal.
+- **Known gotcha, already hit and fixed:** `spatie/laravel-backup` shells out to `mysqldump`, resolved via
+  the OS `PATH`. The web server process (`php -S` locally, likely PHP-FPM on the Namecheap host) does **not**
+  see the same `PATH` a login shell does, so a backup triggered from the CLI can succeed while the identical
+  command triggered from the admin UI fails with `mysqldump: command not found`. Fixed by setting
+  `DB_DUMP_BINARY_PATH` (`config/database.php` → `connections.mysql.dump.dump_binary_path`) to the directory
+  containing `mysqldump` explicitly, bypassing `PATH` resolution entirely. Local `.env` has this set to
+  `/opt/homebrew/bin`; **production will need its own value** once deployed – find it via `which mysqldump`
+  over SSH on the Namecheap host and set `DB_DUMP_BINARY_PATH` accordingly if the same error shows up there.
+- Tests: `tests/Feature/AdminBackupsTest.php` (access control, empty state, listing order, delete, manual
+  trigger) – all run against `Storage::fake('s3')`, never real AWS.
+
+### Still outstanding from this round
+
+- The Namecheap production `.env` does not yet have any of the above wired up (AWS credentials,
+  `AWS_BUCKET=ngmcleaning-prod`, `DB_DUMP_BINARY_PATH`, the Resend key) – flagged repeatedly during this
+  work, not yet done.
+- No cron entry exists yet on the Namecheap host for `php artisan schedule:run` – needed both for the
+  6-hourly backup schedule above and for Cashier's subscription renewal checks (Section 8) whenever billing
+  is eventually built. This was already a known gap before this round and is still unresolved.
+- The "professionalism brand rewrite" and the "two-sided marketplace" scope question above are both open
+  questions with the client, not yet answered.
 
 ===
 
