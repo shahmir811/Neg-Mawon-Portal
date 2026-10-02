@@ -16,10 +16,10 @@ class JobPriceCalculator
 {
     /**
      * @param  array<string, mixed>  $attributes  Same shape as the job's
-     *   validated form data: property_type, property_size, bedroom_count,
-     *   bathroom_count, cleaning_type, has_pets, pet_count, laundry_addon,
-     *   frequency. Enum fields may be passed as their string value or the
-     *   enum instance.
+     *                                            validated form data: property_type, property_size, bedroom_count,
+     *                                            bathroom_count, cleaning_type, has_pets, pet_count, laundry_addon,
+     *                                            frequency. Enum fields may be passed as their string value or the
+     *                                            enum instance.
      */
     public static function estimate(array $attributes): float
     {

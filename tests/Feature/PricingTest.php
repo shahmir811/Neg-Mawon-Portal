@@ -3,6 +3,7 @@
 use App\Enums\CleaningType;
 use App\Enums\JobFrequency;
 use App\Enums\PropertyType;
+use App\Enums\ServiceType;
 use App\Models\CleaningJob;
 use App\Models\PricingSetting;
 use App\Models\User;
@@ -94,7 +95,7 @@ test('a job request stores the calculated estimated price', function () {
         ->set('address', '1 Estimate Way, Philadelphia, PA 19111')
         ->set('requested_at', now()->addDay()->format('Y-m-d\TH:i'))
         ->set('property_type', PropertyType::Residential->value)
-        ->set('service_type', \App\Enums\ServiceType::HouseCleaning->value)
+        ->set('service_type', ServiceType::HouseCleaning->value)
         ->set('frequency', JobFrequency::OneTime->value)
         ->set('cleaning_type', CleaningType::Deep->value)
         ->set('property_size', '1,000-3,000 sq ft')
