@@ -39,12 +39,25 @@ return [
         ],
 
         'public' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'driver' => env('FILESYSTEM_PUBLIC_DRIVER', 'local'),
+            // "root" means a local directory for the "local" driver but a bucket
+            // key-prefix for "s3" — must stay empty on s3 or uploads land under a
+            // garbage key built from this server's absolute filesystem path.
+            'root' => env('FILESYSTEM_PUBLIC_DRIVER', 'local') === 's3' ? '' : storage_path('app/public'),
             'url' => rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage',
-            'visibility' => 'public',
+            // Only applied for the "local" driver. The S3 buckets have ACLs disabled
+            // (bucket-owner-enforced) and block all public access by design — access
+            // is via signed temporary URLs instead (see App\Support\StorageUrl), so
+            // setting "public-read" ACLs on upload would be rejected by S3 outright.
+            'visibility' => env('FILESYSTEM_PUBLIC_DRIVER', 'local') === 's3' ? null : 'public',
             'throw' => false,
             'report' => false,
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
         's3' => [

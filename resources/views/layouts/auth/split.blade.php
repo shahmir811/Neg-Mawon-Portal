@@ -14,7 +14,7 @@
                 </a>
 
                 <div class="relative z-20 mt-auto text-xs uppercase tracking-[0.25em] text-background/70">
-                    Northeast Philadelphia &middot; Family-Owned &middot; Haitian-American
+                    Pennsylvania &middot; New Jersey &middot; Delaware &middot; Family-Owned
                 </div>
             </div>
             <div class="w-full lg:p-8">

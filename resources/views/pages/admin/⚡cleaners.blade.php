@@ -5,8 +5,8 @@ use App\Enums\JobStatus;
 use App\Enums\Role;
 use App\Enums\SubscriptionStatus;
 use App\Models\User;
+use App\Support\StorageUrl;
 use Flux\Flux;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -90,13 +90,9 @@ new #[Title('Cleaners')] class extends Component
                 'email' => $cleaner->email,
                 'phone' => $cleaner->cleanerProfile?->phone,
                 'zip_code' => $cleaner->cleanerProfile?->zip_code,
-                'photo_url' => $cleaner->cleanerProfile?->photo_path
-                    ? Storage::url($cleaner->cleanerProfile->photo_path)
-                    : null,
+                'photo_url' => StorageUrl::for($cleaner->cleanerProfile?->photo_path),
                 'agreement_status' => $cleaner->cleanerProfile?->agreementStatus() ?? AgreementStatus::NotSubmitted,
-                'agreement_photo_url' => $cleaner->cleanerProfile?->agreement_photo_path
-                    ? Storage::url($cleaner->cleanerProfile->agreement_photo_path)
-                    : null,
+                'agreement_photo_url' => StorageUrl::for($cleaner->cleanerProfile?->agreement_photo_path),
                 'subscription_status' => $cleaner->cleanerProfile?->subscription_status,
                 'subscription_plan' => $cleaner->cleanerProfile?->subscription_plan,
                 'next_renewal_at' => $cleaner->cleanerProfile?->next_renewal_at,
