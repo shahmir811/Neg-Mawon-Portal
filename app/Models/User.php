@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Role;
+use App\Support\StorageUrl;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -14,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -89,7 +89,7 @@ class User extends Authenticatable
     {
         $photoPath = $this->cleanerProfile?->photo_path;
 
-        return $photoPath ? Storage::url($photoPath) : null;
+        return StorageUrl::for($photoPath);
     }
 
     /** @return HasOne<CleanerProfile, $this> */

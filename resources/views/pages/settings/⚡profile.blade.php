@@ -2,6 +2,7 @@
 
 use App\Concerns\ProfileValidationRules;
 use App\Enums\AgreementStatus;
+use App\Support\StorageUrl;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
@@ -131,17 +132,13 @@ new #[Title('Profile settings')] class extends Component {
     #[Computed]
     public function currentPhotoUrl(): ?string
     {
-        $photoPath = Auth::user()->cleanerProfile?->photo_path;
-
-        return $photoPath ? Storage::url($photoPath) : null;
+        return StorageUrl::for(Auth::user()->cleanerProfile?->photo_path);
     }
 
     #[Computed]
     public function currentAgreementPhotoUrl(): ?string
     {
-        $photoPath = Auth::user()->cleanerProfile?->agreement_photo_path;
-
-        return $photoPath ? Storage::url($photoPath) : null;
+        return StorageUrl::for(Auth::user()->cleanerProfile?->agreement_photo_path);
     }
 
     #[Computed]

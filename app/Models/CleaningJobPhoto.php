@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Support\StorageUrl;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 #[Fillable(['cleaning_job_id', 'path'])]
 class CleaningJobPhoto extends Model
@@ -18,6 +18,6 @@ class CleaningJobPhoto extends Model
 
     public function url(): string
     {
-        return Storage::url($this->path);
+        return StorageUrl::for($this->path) ?? '';
     }
 }

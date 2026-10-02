@@ -62,6 +62,12 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+            // spatie/laravel-backup shells out to `mysqldump`. The web server process
+            // (PHP-FPM / `php -S`) often doesn't see the same PATH a login shell does —
+            // set this explicitly rather than relying on PATH resolution at request time.
+            'dump' => [
+                'dump_binary_path' => env('DB_DUMP_BINARY_PATH', ''),
+            ],
         ],
 
         'mariadb' => [

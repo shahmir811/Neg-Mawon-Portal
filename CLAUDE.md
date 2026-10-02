@@ -152,6 +152,38 @@ photo – nothing else about them.
      hint for James to judge proximity himself, not a distance calculation. See the non-negotiable rule
      above before building anything that sorts or auto-selects on this field.
    - Tests for all of the above live in `tests/Feature/PricingTest.php`.
+10. **Contact form, email, S3 storage, and database backups** (AGENTS.md Section 12 has full detail) — none
+    of this was part of the original Section 4 MVP scope; it came from client feedback and infra requests
+    after Phase A:
+    - The landing page contact form (`resources/views/welcome.blade.php`,
+      `App\Http\Controllers\ContactController`) now has a required `phone` field and sends via Resend
+      (`MAIL_MAILER=resend`) using a fully custom branded template (`App\Mail\ContactFormReceived`,
+      `resources/views/emails/contact-form.blade.php`) — not Laravel's default Markdown mail styling.
+      Current recipients: `ngmcleaning2026@gmail.com`, `jnguillaume4@gmail.com`, `jldajeune@gmail.com`.
+    - Brand copy was updated per client feedback: Haitian-American heritage references removed site-wide
+      (hero tag, "Our Story" section, image alt text, footer), service-area messaging broadened from
+      Northeast Philadelphia to Pennsylvania/New Jersey/Delaware. A "professionalism as the primary brand"
+      voice rewrite was explicitly requested but **not yet done** — don't assume it's finished; the "Our
+      Story" section is a minimal placeholder pending that rewrite.
+    - Photo storage (cleaner profile photos, job photos, agreement photos) moved to S3 — two buckets,
+      `ngmcleaning-dev` and `ngmcleaning-prod`, both private (Block Public Access on, ACLs disabled, no
+      public-read). The `public` disk (`config/filesystems.php`) now switches between `local`/`s3` via
+      `FILESYSTEM_PUBLIC_DRIVER`; every existing `store('x', 'public')` call site is unchanged. All reads go
+      through `App\Support\StorageUrl::for($path)` (30-minute signed temporary URL on s3, plain URL on
+      local) — don't reintroduce raw `Storage::url()` calls for user-uploaded photos.
+    - Database backups: `spatie/laravel-backup`, scheduled in `routes/console.php`
+      (`backup:run --only-db` every 6 hours, `backup:clean` monthly on the first Sunday — both
+      production-only via `->environments(['production'])`), uploading to the same per-environment S3
+      buckets under an `ngm-cleaning/` key prefix, 30-day flat retention. Admin UI at
+      `resources/views/pages/admin/⚡backups.blade.php` (`admin.backups` route, sidebar link) — list, manual
+      "Back up now" trigger, delete with confirmation. If a manual backup fails with
+      `mysqldump: command not found`, it's a PATH-resolution gap between the CLI and the web server
+      process — set `DB_DUMP_BINARY_PATH` in `.env` (read by `config/database.php`), don't chase it as a
+      PHP/Livewire bug.
+    - Still outstanding: the Namecheap production `.env` doesn't have any of the above wired up yet (AWS
+      credentials, `AWS_BUCKET=ngmcleaning-prod`, `DB_DUMP_BINARY_PATH`, Resend key), and there's still no
+      server cron for `php artisan schedule:run` — both flagged to the client, neither resolved as of this
+      writing.
 
 ## When something is ambiguous
 

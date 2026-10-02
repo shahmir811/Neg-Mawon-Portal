@@ -8,13 +8,13 @@ use App\Enums\JobFrequency;
 use App\Enums\JobStatus;
 use App\Enums\PropertyType;
 use App\Enums\ServiceType;
+use App\Support\StorageUrl;
 use Database\Factories\CleaningJobFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
 
 #[Fillable([
     'customer_id',
@@ -108,7 +108,7 @@ class CleaningJob extends Model
     {
         $photoPath = $this->cleaner?->cleanerProfile?->photo_path;
 
-        return $photoPath ? Storage::url($photoPath) : null;
+        return StorageUrl::for($photoPath);
     }
 
     /**

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        @include('partials.head', ['title' => 'Trusted House Cleaning in Northeast Philadelphia'])
+        @include('partials.head', ['title' => 'Trusted Cleaning Services Across Pennsylvania, New Jersey & Delaware'])
 
         <style>
             .animate-on-scroll {
@@ -107,7 +107,7 @@
                     </div>
 
                     <p class="mb-6 text-xs uppercase tracking-[0.25em] text-primary/70 md:text-sm">
-                        Northeast Philadelphia &middot; Family-Owned &middot; Haitian-American
+                        Pennsylvania &middot; New Jersey &middot; Delaware &middot; Family-Owned
                     </p>
 
                     <h1 class="max-w-4xl text-5xl font-medium leading-[1.05] tracking-tight text-primary md:text-6xl lg:text-7xl">
@@ -116,7 +116,7 @@
                     </h1>
 
                     <p class="mt-8 max-w-2xl text-lg leading-relaxed text-text/75 md:text-xl">
-                        NGM Cleaning Services is Northeast Philly's trusted 5-star house cleaning team – offering standard cleans, deep cleans, house clearance, and professional organizing for busy Philadelphia families.
+                        NGM Cleaning Services is a trusted 5-star cleaning team offering standard cleans, deep cleans, house clearance, and professional organizing for homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware.
                     </p>
 
                     <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
@@ -133,7 +133,7 @@
                     <div class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-text/60">
                         <span class="flex items-center gap-1.5"><flux:icon.shield-check class="size-4 text-primary" /> Fully Insured</span>
                         <span class="flex items-center gap-1.5"><flux:icon.calendar-check class="size-4 text-primary" /> Mon–Sat 9AM–5PM</span>
-                        <span class="flex items-center gap-1.5"><flux:icon.map-pin class="size-4 text-primary" /> Serving NE Philadelphia</span>
+                        <span class="flex items-center gap-1.5"><flux:icon.map-pin class="size-4 text-primary" /> Serving PA, NJ &amp; DE</span>
                     </div>
 
                     <div class="relative mt-16 w-full max-w-5xl">
@@ -141,7 +141,7 @@
                         <div class="relative overflow-hidden rounded-3xl border border-white/60 shadow-2xl">
                             <img
                                 src="https://zgnpmogdjnnhpwewavnr.supabase.co/storage/v1/object/public/project-images/6aeb0c72-051a-4b62-aa01-435fcb5871fe/da9c7a5f-9714-4e81-9dbd-846fac18696d.png"
-                                alt="Bright, sunlit, spotlessly cleaned Philadelphia row home living room with polished hardwood floors and pristine furniture after professional cleaning by NGM Cleaning Services"
+                                alt="Bright, sunlit, spotlessly cleaned row home living room with polished hardwood floors and pristine furniture after professional cleaning by NGM Cleaning Services"
                                 class="h-auto w-full object-cover"
                                 loading="eager"
                             >
@@ -170,7 +170,7 @@
                 <div class="animate-on-scroll mb-16 text-center">
                     <span class="mb-5 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">What We Offer</span>
                     <h2 class="mb-5 text-4xl font-medium tracking-tight text-primary md:text-5xl lg:text-6xl">Cleaning services built<br>around your home</h2>
-                    <p class="mx-auto max-w-2xl text-lg leading-relaxed text-text/75">From weekly upkeep to full move-out clearances, our Northeast Philly team treats every home with the care it deserves.</p>
+                    <p class="mx-auto max-w-2xl text-lg leading-relaxed text-text/75">From weekly upkeep to full move-out clearances, our team treats every home, business, and organization with the care it deserves.</p>
                 </div>
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -201,7 +201,7 @@
                             <div class="absolute -left-6 -top-6 -z-10 h-32 w-32 rounded-3xl bg-gold/40"></div>
                             <img
                                 src="https://zgnpmogdjnnhpwewavnr.supabase.co/storage/v1/object/public/project-images/6aeb0c72-051a-4b62-aa01-435fcb5871fe/34b5ced2-6473-45a0-b24b-612534982133.png"
-                                alt="Friendly Haitian-American cleaning team from NGM Cleaning smiling in a bright Philadelphia home"
+                                alt="Friendly NGM Cleaning team smiling in a bright, freshly cleaned home"
                                 class="relative h-auto w-full rounded-3xl shadow-2xl"
                             >
                             <div class="absolute -bottom-6 -right-6 -z-10 h-32 w-32 rounded-3xl bg-primary"></div>
@@ -209,9 +209,9 @@
                     </div>
                     <div class="animate-on-scroll order-1 lg:order-2">
                         <span class="mb-5 inline-block rounded-full bg-background px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Our Story</span>
-                        <h2 class="mb-6 text-4xl font-medium leading-[1.05] tracking-tight text-primary md:text-5xl lg:text-6xl">A family name rooted in freedom.</h2>
-                        <p class="mb-5 text-lg leading-relaxed text-text/85">NGM takes its name from <em class="font-semibold not-italic text-primary">"Nèg Mawon"</em> – a proud Haitian symbol of freedom – the maroon who broke chains and lived on his own terms. That spirit is stitched into everything we do.</p>
-                        <p class="mb-8 text-lg leading-relaxed text-text/75">We're a Haitian-American, family-run business proudly serving Northeast Philadelphia. Every home we clean, we treat like our grandmother's parlor – with warmth, respect, and honest work. No shortcuts. No surprises. Just spotless.</p>
+                        <h2 class="mb-6 text-4xl font-medium leading-[1.05] tracking-tight text-primary md:text-5xl lg:text-6xl">A family name you can trust.</h2>
+                        <p class="mb-5 text-lg leading-relaxed text-text/85">NGM Cleaning Services was built on one idea: every space deserves the same care and attention we'd give our own home. That standard is stitched into everything we do.</p>
+                        <p class="mb-8 text-lg leading-relaxed text-text/75">We're a family-run business proudly serving homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware – with warmth, respect, and honest work. No shortcuts. No surprises. Just spotless.</p>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="flex items-start gap-3">
                                 <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary">
@@ -228,7 +228,7 @@
                                 </div>
                                 <div>
                                     <h4 class="mb-1 font-semibold text-primary">Family-Run</h4>
-                                    <p class="text-sm text-text/70">Local, trusted, personal</p>
+                                    <p class="text-sm text-text/70">Trusted, personal service</p>
                                 </div>
                             </div>
                         </div>
@@ -275,7 +275,7 @@
             <div class="mx-auto max-w-6xl px-6 sm:px-8">
                 <div class="animate-on-scroll mb-16 text-center">
                     <span class="mb-5 inline-block rounded-full bg-background px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Google Reviews</span>
-                    <h2 class="mb-5 text-4xl font-medium tracking-tight text-primary md:text-5xl lg:text-6xl">Loved by Northeast Philly.</h2>
+                    <h2 class="mb-5 text-4xl font-medium tracking-tight text-primary md:text-5xl lg:text-6xl">Loved Across PA, NJ &amp; Delaware.</h2>
                     <div class="mb-3 flex items-center justify-center gap-2">
                         <div class="flex gap-1 text-gold">
                             @for ($i = 0; $i < 5; $i++)
@@ -328,7 +328,7 @@
                         Ready for a <em class="not-italic text-gold">Spotless</em> Home?
                     </h2>
                     <p class="mx-auto max-w-2xl text-lg leading-relaxed text-secondary/85">
-                        Request your free quote today. Our Northeast Philly team will get back to you within 24 hours.
+                        Request your free quote today. Our team will get back to you within 24 hours.
                     </p>
                 </div>
 
@@ -380,7 +380,7 @@
                                 </div>
                                 <span class="text-sm font-bold text-background">5.0 Google Rating</span>
                             </div>
-                            <p class="text-sm text-secondary/85">Trusted by hundreds of Northeast Philly families.</p>
+                            <p class="text-sm text-secondary/85">Trusted across Pennsylvania, New Jersey &amp; Delaware.</p>
                         </div>
                     </div>
 
@@ -478,7 +478,7 @@
                             <p class="text-xs font-semibold uppercase tracking-widest text-gold">Cleaning Services LLC</p>
                         </div>
                         <p class="mb-6 text-sm leading-relaxed text-secondary/75">
-                            A proud Haitian-American, family-run cleaning company serving Northeast Philadelphia with excellence and freedom in every clean.
+                            A family-run cleaning company serving homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware with excellence in every clean.
                         </p>
                         <div class="flex items-center gap-3">
                             <a href="#" aria-label="Instagram" class="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-secondary transition-all duration-300 hover:-translate-y-1 hover:text-gold">
@@ -540,7 +540,7 @@
                     <p class="flex items-center gap-2 text-xs text-secondary/50">
                         <span>Made with</span>
                         <flux:icon.heart variant="solid" class="size-3 text-gold" />
-                        <span>in Northeast Philadelphia</span>
+                        <span>across PA, NJ &amp; DE</span>
                     </p>
                 </div>
             </div>
