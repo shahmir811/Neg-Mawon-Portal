@@ -5,6 +5,7 @@ use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
+Route::view('/become-a-cleaner', 'pages.become-a-cleaner')->name('become-a-cleaner');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::middleware(['auth', 'verified'])->group(function () {

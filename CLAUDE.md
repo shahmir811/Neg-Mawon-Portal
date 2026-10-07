@@ -184,6 +184,27 @@ photo – nothing else about them.
       credentials, `AWS_BUCKET=ngmcleaning-prod`, `DB_DUMP_BINARY_PATH`, Resend key), and there's still no
       server cron for `php artisan schedule:run` — both flagged to the client, neither resolved as of this
       writing.
+11. **Marketplace-positioning copy fixes and a cleaner-recruitment page** — a second round of client
+    (Jean) feedback asked for NGM to be rebuilt as a full two-sided marketplace (self-service booking with
+    live pricing, public cleaner profiles/ratings, Stripe Connect payments, automated job dispatch, in-app
+    messaging, etc.). That is explicitly **out of scope** for this app — it conflicts with every
+    non-negotiable rule at the top of this file (manual-only assignment, no cleaner PII to customers, no
+    in-app payments) and would require a separate scoping/pricing conversation, not incremental code
+    changes. Only the cheap, non-architectural pieces of that feedback were implemented:
+    - `resources/views/welcome.blade.php` copy was reframed from "family-run team" to "vetted network of
+      cleaning professionals" (hero eyebrow/subhead, "Our Story" section, footer blurb) — this also
+      completes the "professionalism as primary brand" voice rewrite flagged as not-yet-done in item 10
+      above; don't treat that note as current anymore.
+    - A public `/become-a-cleaner` marketing page was added (`resources/views/pages/become-a-cleaner.blade.php`,
+      `become-a-cleaner` route in `routes/web.php`) covering pay, flexibility, and requirements, linking to
+      `register` with `?role=cleaner` to preselect the existing Cleaner toggle — no new signup flow, just a
+      front door to the one that already existed. `register.blade.php`'s Alpine `role` default now reads
+      that query param (whitelisted to `cleaner`/`customer` server-side before interpolation — don't widen
+      that to accept arbitrary query input, it's inlined into an Alpine `x-data` JS string).
+    - New service types (move-out, Airbnb turnover, office/commercial) were explicitly **not** added — unlike
+      the copy/page changes, that would touch `CleaningJobFormFields`, the pricing enum, and
+      `JobPriceCalculator`, and James hasn't supplied real rates even for the existing service types yet
+      (see item 9's pricing note). Needs his input before it's buildable.
 
 ## When something is ambiguous
 

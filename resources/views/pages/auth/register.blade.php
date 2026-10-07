@@ -1,3 +1,7 @@
+@php
+    $defaultRole = request()->query('role') === 'cleaner' ? 'cleaner' : 'customer';
+@endphp
+
 <x-layouts::auth :title="__('Register')">
     <div class="flex flex-col gap-6">
         <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
@@ -10,7 +14,7 @@
             action="{{ route('register.store') }}"
             enctype="multipart/form-data"
             class="flex flex-col gap-6"
-            x-data="{ role: '{{ old('role', 'customer') }}' }"
+            x-data="{ role: '{{ old('role', $defaultRole) }}' }"
         >
             @csrf
 

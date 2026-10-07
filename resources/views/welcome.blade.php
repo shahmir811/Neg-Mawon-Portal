@@ -7,12 +7,14 @@
             .animate-on-scroll {
                 opacity: 0;
                 transform: translateY(20px);
-                transition: opacity 0.6s ease, transform 0.6s ease;
+                transition: opacity 0.5s ease-out, transform 0.5s ease-out, translate 0.5s ease-out, box-shadow 0.5s ease-out;
+                transition-delay: var(--reveal-delay, 0ms);
             }
 
             .animate-on-scroll.visible {
                 opacity: 1;
                 transform: translateY(0);
+                transition-delay: 0ms;
             }
 
             @media (prefers-reduced-motion: reduce) {
@@ -40,6 +42,7 @@
                     <a href="#process" class="text-sm text-text transition-colors hover:text-primary">Process</a>
                     <a href="#testimonials" class="text-sm text-text transition-colors hover:text-primary">Reviews</a>
                     <a href="#faq" class="text-sm text-text transition-colors hover:text-primary">FAQ</a>
+                    <a href="{{ route('become-a-cleaner') }}" class="text-sm text-text transition-colors hover:text-primary">Become a Cleaner</a>
                     <a href="tel:+12676901707" class="flex items-center gap-1.5 text-sm font-semibold text-primary">
                         <flux:icon.phone class="size-4" />
                         (267) 690-1707
@@ -69,6 +72,7 @@
                             <a @click="open = false" href="#process" class="text-sm text-text">Process</a>
                             <a @click="open = false" href="#testimonials" class="text-sm text-text">Reviews</a>
                             <a @click="open = false" href="#faq" class="text-sm text-text">FAQ</a>
+                            <a @click="open = false" href="{{ route('become-a-cleaner') }}" class="text-sm text-text">Become a Cleaner</a>
                             <a @click="open = false" href="tel:+12676901707" class="text-sm font-semibold text-primary">(267) 690-1707</a>
 
                             @auth
@@ -107,7 +111,7 @@
                     </div>
 
                     <p class="mb-6 text-xs uppercase tracking-[0.25em] text-primary/70 md:text-sm">
-                        Pennsylvania &middot; New Jersey &middot; Delaware &middot; Family-Owned
+                        Pennsylvania &middot; New Jersey &middot; Delaware &middot; Vetted Cleaning Professionals
                     </p>
 
                     <h1 class="max-w-4xl text-5xl font-medium leading-[1.05] tracking-tight text-primary md:text-6xl lg:text-7xl">
@@ -116,7 +120,7 @@
                     </h1>
 
                     <p class="mt-8 max-w-2xl text-lg leading-relaxed text-text/75 md:text-xl">
-                        NGM Cleaning Services is a trusted 5-star cleaning team offering standard cleans, deep cleans, house clearance, and professional organizing for homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware.
+                        NGM Cleaning Services connects you with a trusted, 5-star network of vetted cleaning professionals offering standard cleans, deep cleans, house clearance, and professional organizing for homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware.
                     </p>
 
                     <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
@@ -180,7 +184,7 @@
                         ['icon' => 'package', 'title' => 'House Clearance', 'body' => 'Estate cleanouts, post-renovation debris, garage clearances – hauled, sorted, and left spotless.'],
                         ['icon' => 'layout-grid', 'title' => 'Professional Organizing', 'body' => 'Closets, pantries, playrooms – transformed into calm, functional spaces you\'ll actually maintain.'],
                     ] as $index => $service)
-                        <div class="animate-on-scroll group relative rounded-3xl border border-secondary bg-surface p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $index * 100 }}ms;">
+                        <div class="animate-on-scroll group relative rounded-3xl border border-secondary bg-surface p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="--reveal-delay: {{ $index * 100 }}ms;">
                             <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary transition-transform duration-500 group-hover:scale-110">
                                 <flux:icon :name="$service['icon']" class="size-7 text-gold" />
                             </div>
@@ -209,9 +213,9 @@
                     </div>
                     <div class="animate-on-scroll order-1 lg:order-2">
                         <span class="mb-5 inline-block rounded-full bg-background px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Our Story</span>
-                        <h2 class="mb-6 text-4xl font-medium leading-[1.05] tracking-tight text-primary md:text-5xl lg:text-6xl">A family name you can trust.</h2>
+                        <h2 class="mb-6 text-4xl font-medium leading-[1.05] tracking-tight text-primary md:text-5xl lg:text-6xl">A trusted network, held to one standard.</h2>
                         <p class="mb-5 text-lg leading-relaxed text-text/85">NGM Cleaning Services was built on one idea: every space deserves the same care and attention we'd give our own home. That standard is stitched into everything we do.</p>
-                        <p class="mb-8 text-lg leading-relaxed text-text/75">We're a family-run business proudly serving homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware – with warmth, respect, and honest work. No shortcuts. No surprises. Just spotless.</p>
+                        <p class="mb-8 text-lg leading-relaxed text-text/75">Every cleaning professional in our network is personally reviewed before they ever step into your home, serving homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware – with professionalism, respect, and honest work. No shortcuts. No surprises. Just spotless.</p>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="flex items-start gap-3">
                                 <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary">
@@ -227,8 +231,8 @@
                                     <flux:icon.heart-handshake class="size-5 text-gold" />
                                 </div>
                                 <div>
-                                    <h4 class="mb-1 font-semibold text-primary">Family-Run</h4>
-                                    <p class="text-sm text-text/70">Trusted, personal service</p>
+                                    <h4 class="mb-1 font-semibold text-primary">Vetted Pros</h4>
+                                    <p class="text-sm text-text/70">Reviewed before every placement</p>
                                 </div>
                             </div>
                         </div>
@@ -292,7 +296,7 @@
                         ['initials' => 'DP', 'quote' => 'Booked a deep clean before my mom moved in. The NGM Cleaning team was warm, punctual, and thorough. My kitchen actually smells like lemon now. Highly recommend!', 'name' => 'Devon P.', 'location' => 'Fox Chase, PA'],
                         ['initials' => 'AS', 'quote' => 'Hired them for a full house clearance after my dad passed. They handled everything with dignity, care, and hard work. A blessing to our family. Thank you.', 'name' => 'Angela S.', 'location' => 'Bustleton, PA'],
                     ] as $index => $review)
-                        <div class="animate-on-scroll rounded-3xl border border-primary/10 bg-background/70 p-8 backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $index * 100 }}ms;">
+                        <div class="animate-on-scroll rounded-3xl border border-primary/10 bg-background/70 p-8 backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="--reveal-delay: {{ $index * 100 }}ms;">
                             <flux:icon.quote class="mb-5 size-10 text-gold" />
                             <div class="mb-5 flex gap-1 text-gold">
                                 @for ($i = 0; $i < 5; $i++)
@@ -478,7 +482,7 @@
                             <p class="text-xs font-semibold uppercase tracking-widest text-gold">Cleaning Services LLC</p>
                         </div>
                         <p class="mb-6 text-sm leading-relaxed text-secondary/75">
-                            A family-run cleaning company serving homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware with excellence in every clean.
+                            A trusted network of vetted cleaning professionals serving homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware with excellence in every clean.
                         </p>
                         <div class="flex items-center gap-3">
                             <a href="#" aria-label="Instagram" class="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-secondary transition-all duration-300 hover:-translate-y-1 hover:text-gold">
@@ -511,6 +515,7 @@
                             <li><a href="#testimonials" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Reviews</a></li>
                             <li><a href="#faq" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">FAQ</a></li>
                             <li><a href="#contact" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Get a Quote</a></li>
+                            <li><a href="{{ route('become-a-cleaner') }}" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Become a Cleaner</a></li>
                         </ul>
                     </div>
 

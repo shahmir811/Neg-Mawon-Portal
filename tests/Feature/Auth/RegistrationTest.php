@@ -16,6 +16,18 @@ test('registration screen can be rendered', function () {
     $response->assertOk();
 });
 
+test('registration screen preselects the cleaner role from the query string', function () {
+    $response = $this->get(route('register', ['role' => 'cleaner']));
+
+    $response->assertOk()->assertSee("role: 'cleaner'", false);
+});
+
+test('registration screen ignores an invalid role in the query string', function () {
+    $response = $this->get(route('register', ['role' => "'});alert(1);({x:'"]));
+
+    $response->assertOk()->assertSee("role: 'customer'", false);
+});
+
 test('new users can register', function () {
     $response = $this->post(route('register.store'), [
         'name' => 'John Doe',
