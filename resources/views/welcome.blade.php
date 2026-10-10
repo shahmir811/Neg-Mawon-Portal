@@ -136,7 +136,9 @@
 
                     <div class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-text/60">
                         <span class="flex items-center gap-1.5"><flux:icon.shield-check class="size-4 text-primary" /> Fully Insured</span>
-                        <span class="flex items-center gap-1.5"><flux:icon.calendar-check class="size-4 text-primary" /> Mon–Sat 9AM–5PM</span>
+                        <span class="flex items-center gap-1.5"><flux:icon.check-badge class="size-4 text-primary" /> One NGM Standard</span>
+                        <span class="flex items-center gap-1.5"><flux:icon.heart-handshake class="size-4 text-primary" /> Satisfaction Guaranteed</span>
+                        <span class="flex items-center gap-1.5"><flux:icon.calendar-check class="size-4 text-primary" /> Convenient Booking</span>
                         <span class="flex items-center gap-1.5"><flux:icon.map-pin class="size-4 text-primary" /> Serving PA, NJ &amp; DE</span>
                     </div>
 
@@ -179,10 +181,10 @@
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     @foreach ([
-                        ['icon' => 'sparkles', 'title' => 'Standard Cleaning', 'body' => 'Weekly or bi-weekly upkeep – dusting, vacuuming, mopping, kitchens, and baths done right every time.'],
-                        ['icon' => 'spray-can', 'title' => 'Deep Cleaning', 'body' => 'Baseboards, grout, inside appliances, vents – the works. Perfect for seasonal resets and move-in shine.'],
-                        ['icon' => 'package', 'title' => 'House Clearance', 'body' => 'Estate cleanouts, post-renovation debris, garage clearances – hauled, sorted, and left spotless.'],
-                        ['icon' => 'layout-grid', 'title' => 'Professional Organizing', 'body' => 'Closets, pantries, playrooms – transformed into calm, functional spaces you\'ll actually maintain.'],
+                        ['icon' => 'sparkles', 'title' => 'Standard Cleaning', 'body' => 'Dusting, vacuuming, mopping, kitchens, and baths – the full checklist, done right every visit. Book one-time or on a recurring schedule.'],
+                        ['icon' => 'spray-can', 'title' => 'Deep Cleaning', 'body' => 'Baseboards, grout, inside appliances, vents – the works. The standard reset for move-ins, seasonal refreshes, or a first-time clean.'],
+                        ['icon' => 'package', 'title' => 'House Clearance', 'body' => 'Estate cleanouts, post-renovation debris, garage clearances – hauled, sorted, and left spotless, start to finish.'],
+                        ['icon' => 'layout-grid', 'title' => 'Professional Organizing', 'body' => 'Closets, pantries, playrooms – transformed into calm, functional spaces you\'ll actually maintain long after we leave.'],
                     ] as $index => $service)
                         <div class="animate-on-scroll group relative rounded-3xl border border-secondary bg-surface p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="--reveal-delay: {{ $index * 100 }}ms;">
                             <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary transition-transform duration-500 group-hover:scale-110">
@@ -193,6 +195,45 @@
                             <div class="h-0.5 w-0 bg-gold transition-all duration-500 group-hover:w-16"></div>
                         </div>
                     @endforeach
+                </div>
+
+                <div class="animate-on-scroll mt-10 text-center">
+                    <a href="#contact" class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-gold">
+                        Not sure which service you need? Get a free quote
+                        <flux:icon.arrow-right class="size-4" />
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="recurring" class="bg-secondary py-20 md:py-28 lg:py-32">
+            <div class="mx-auto max-w-6xl px-6 sm:px-8">
+                <div class="grid items-center gap-16 lg:grid-cols-2 lg:gap-20">
+                    <div class="animate-on-scroll">
+                        <span class="mb-5 inline-block rounded-full bg-background px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Recurring Service</span>
+                        <h2 class="mb-6 text-4xl font-medium leading-[1.05] tracking-tight text-primary md:text-5xl lg:text-6xl">Save time with recurring cleaning.</h2>
+                        <p class="mb-8 text-lg leading-relaxed text-text/75">Keep your space consistently spotless without re-booking every time. Tell us how often you'd like service in your free quote request, and we'll set up a schedule that fits your home or business.</p>
+                        <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                            @foreach (['Weekly', 'Biweekly', 'Monthly', 'One-Time'] as $frequency)
+                                <div class="rounded-2xl border border-primary/15 bg-background/70 px-4 py-3 text-center">
+                                    <p class="text-sm font-semibold text-primary">{{ $frequency }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                        <a href="#contact" class="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-semibold text-background shadow-xl shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30">
+                            Set Up Recurring Service
+                            <flux:icon.arrow-right class="size-5" />
+                        </a>
+                    </div>
+                    <div class="animate-on-scroll relative">
+                        <div class="absolute -right-6 -top-6 -z-10 h-32 w-32 rounded-3xl bg-gold/40"></div>
+                        <img
+                            src="https://zgnpmogdjnnhpwewavnr.supabase.co/storage/v1/object/public/project-images/6aeb0c72-051a-4b62-aa01-435fcb5871fe/34b5ced2-6473-45a0-b24b-612534982133.png"
+                            alt="NGM Cleaning professional maintaining a home on a recurring cleaning schedule"
+                            class="relative h-auto w-full rounded-3xl shadow-2xl"
+                        >
+                        <div class="absolute -bottom-6 -left-6 -z-10 h-32 w-32 rounded-3xl bg-primary"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -214,8 +255,8 @@
                     <div class="animate-on-scroll order-1 lg:order-2">
                         <span class="mb-5 inline-block rounded-full bg-background px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Our Story</span>
                         <h2 class="mb-6 text-4xl font-medium leading-[1.05] tracking-tight text-primary md:text-5xl lg:text-6xl">A trusted network, held to one standard.</h2>
-                        <p class="mb-5 text-lg leading-relaxed text-text/85">NGM Cleaning Services was built on one idea: every space deserves the same care and attention we'd give our own home. That standard is stitched into everything we do.</p>
-                        <p class="mb-8 text-lg leading-relaxed text-text/75">Every cleaning professional in our network is personally reviewed before they ever step into your home, serving homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware – with professionalism, respect, and honest work. No shortcuts. No surprises. Just spotless.</p>
+                        <p class="mb-5 text-lg leading-relaxed text-text/85">NGM Cleaning Services was built on one idea: every space deserves the same care and attention we'd give our own home. We call it the One NGM Standard, and it's stitched into everything we do.</p>
+                        <p class="mb-8 text-lg leading-relaxed text-text/75">Every cleaning professional in our network is personally reviewed before they ever step into your home, serving homes, businesses, and organizations across Pennsylvania, New Jersey, and Delaware – with professionalism, respect, and honest work. No shortcuts. No surprises. Just spotless, backed by our satisfaction guarantee.</p>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="flex items-start gap-3">
                                 <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary">
@@ -332,7 +373,7 @@
                         Ready for a <em class="not-italic text-gold">Spotless</em> Home?
                     </h2>
                     <p class="mx-auto max-w-2xl text-lg leading-relaxed text-secondary/85">
-                        Request your free quote today. Our team will get back to you within 24 hours.
+                        Request your free quote and book a cleaning today – one-time or recurring. Our team will get back to you within 24 hours.
                     </p>
                 </div>
 
@@ -504,6 +545,7 @@
                             <li><a href="#services" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">Deep Cleaning</a></li>
                             <li><a href="#services" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">House Clearance</a></li>
                             <li><a href="#services" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">Professional Organizing</a></li>
+                            <li><a href="#recurring" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">Recurring Cleaning</a></li>
                         </ul>
                     </div>
 

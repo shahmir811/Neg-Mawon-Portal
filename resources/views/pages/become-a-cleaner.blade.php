@@ -38,7 +38,7 @@
             </div>
 
             <div class="mx-auto max-w-4xl px-6 py-20 text-center sm:px-8 md:py-28">
-                <span class="mb-6 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Join Our Network</span>
+                <span class="mb-6 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Join the NEG MAWON Professional Network</span>
 
                 <h1 class="mx-auto max-w-3xl text-5xl font-medium leading-[1.05] tracking-tight text-primary md:text-6xl">
                     Clean on your schedule.<br>
@@ -46,12 +46,12 @@
                 </h1>
 
                 <p class="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-text/75 md:text-xl">
-                    NGM Cleaning is building a trusted network of cleaning professionals across Pennsylvania, New Jersey, and Delaware. Set your own availability, work jobs near you, and get paid for every clean.
+                    NEG MAWON is building a trusted, verified network of cleaning professionals across Pennsylvania, New Jersey, and Delaware. Apply online, complete our onboarding process, and get verified to start receiving cleaning job opportunities – set your own availability, work jobs near you, and get paid for every clean.
                 </p>
 
                 <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
                     <a href="{{ route('register', ['role' => 'cleaner']) }}" class="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-semibold text-background shadow-xl shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30">
-                        Apply Now
+                        Apply to Become an NGM Cleaning Professional
                         <flux:icon.arrow-right class="size-5 transition-transform group-hover:translate-x-1" />
                     </a>
                     <a href="#requirements" class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/70 px-8 py-4 font-semibold text-primary backdrop-blur-xl transition-all duration-300 hover:border-gold hover:bg-white">
@@ -86,10 +86,34 @@
             </div>
         </section>
 
-        <section id="requirements" class="bg-secondary py-20 md:py-28">
+        <section id="how-it-works" class="bg-secondary py-20 md:py-28">
+            <div class="mx-auto max-w-6xl px-6 sm:px-8">
+                <div class="mb-16 text-center">
+                    <span class="mb-5 inline-block rounded-full bg-background px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">How It Works</span>
+                    <h2 class="mb-5 text-4xl font-medium tracking-tight text-primary md:text-5xl">From application to your first job.</h2>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    @foreach ([
+                        ['step' => '1', 'title' => 'Apply Online', 'body' => 'Submit your application with your phone number and a profile photo – it only takes a few minutes.'],
+                        ['step' => '2', 'title' => 'Complete Onboarding', 'body' => 'Sign our professional agreement and finish the NEG MAWON onboarding process.'],
+                        ['step' => '3', 'title' => 'Get Verified', 'body' => 'Our team reviews your application and approves you to join the network.'],
+                        ['step' => '4', 'title' => 'Receive Opportunities', 'body' => 'Get matched with cleaning jobs near you, and manage your assignments through the NEG MAWON platform as new tools become available.'],
+                    ] as $item)
+                        <div class="rounded-3xl bg-background/70 p-6">
+                            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-gold">{{ $item['step'] }}</div>
+                            <h3 class="mb-2 text-lg font-semibold text-primary">{{ $item['title'] }}</h3>
+                            <p class="text-sm leading-relaxed text-text/70">{{ $item['body'] }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section id="requirements" class="bg-background py-20 md:py-28">
             <div class="mx-auto max-w-4xl px-6 sm:px-8">
                 <div class="mb-14 text-center">
-                    <span class="mb-5 inline-block rounded-full bg-background px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Requirements</span>
+                    <span class="mb-5 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Requirements</span>
                     <h2 class="mb-5 text-4xl font-medium tracking-tight text-primary md:text-5xl">What it takes to join.</h2>
                     <p class="mx-auto max-w-2xl text-lg leading-relaxed text-text/75">Every applicant is reviewed before joining the network. Here's what we look for.</p>
                 </div>
@@ -103,7 +127,7 @@
                         'Prior cleaning or housekeeping experience preferred',
                         'Able to pass a background check',
                     ] as $requirement)
-                        <div class="flex items-start gap-3 rounded-2xl bg-background/70 p-5">
+                        <div class="flex items-start gap-3 rounded-2xl border border-secondary bg-surface p-5">
                             <flux:icon.check-circle class="mt-0.5 size-5 shrink-0 text-primary" />
                             <p class="text-base text-text/85">{{ $requirement }}</p>
                         </div>
@@ -124,7 +148,7 @@
                     The application takes a few minutes. Once submitted, our team will review it and follow up with next steps.
                 </p>
                 <a href="{{ route('register', ['role' => 'cleaner']) }}" class="group inline-flex items-center gap-2 rounded-full px-8 py-4 font-semibold text-primary shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl" style="background: linear-gradient(135deg, var(--color-gold), #b8892e);">
-                    Start Your Application
+                    Apply to Become an NGM Cleaning Professional
                     <flux:icon.arrow-right class="size-5 transition-transform group-hover:translate-x-1" />
                 </a>
             </div>

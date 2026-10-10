@@ -214,9 +214,17 @@ was deliberately scoped down (manual assignment, photo-only cleaner identity, no
 
 ## Commercial context (not implementation detail)
 
-MVP build fee is $800 ($250 deposit / $550 on delivery), plus $150/month for ongoing maintenance and
-hosting support. Domain and hosting costs are billed to the client separately. This isn't something to
-build into the app – it's just context for why the scope in AGENTS.md is kept tight.
+Per the signed "Delivered Build, Scope & Commercial Terms" (Revision 7, 11 Sept 2026) and Invoice
+TM-2026-001: Phase 1 total project cost is $2,000 – an $800 build/delivery fee ($400 on signature, $400 at
+go-live) plus $1,200 for separate source code ownership (six $200 monthly installments, code transfers on
+the sixth). $600 has been received ($400 build fee + 1st $200 source-code installment); $1,400 remains
+($400 at go-live + 5 more $200 installments). Hosting/support is free for the first 90 days after go-live,
+then $100/month (billed $300/quarter, six-month minimum). Domain (~$100/yr) and AWS S3 (~$1–5/mo after
+initial free credits) are billed directly to the client's own accounts, not through this fee. A Phase 2
+change order (marketplace-positioning messaging plus real new-feature scope – recurring cleaning, service
+taxonomy/pricing reconciliation, ZIP coverage check, verified reviews) is being scoped separately, proposed
+at $1,400 ($450 deposit / $950 on delivery), pending client agreement. This isn't something to build into
+the app – it's just context for why the scope in AGENTS.md is kept tight.
 
 ===
 
