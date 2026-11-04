@@ -25,6 +25,10 @@
                             {{ __('Customers') }}
                         </flux:sidebar.item>
 
+                        <flux:sidebar.item icon="document-text" :href="route('admin.quote-requests')" :current="request()->routeIs('admin.quote-requests')" wire:navigate>
+                            {{ __('Quote Requests') }}
+                        </flux:sidebar.item>
+
                         <flux:sidebar.item icon="currency-dollar" :href="route('admin.pricing')" :current="request()->routeIs('admin.pricing')" wire:navigate>
                             {{ __('Pricing') }}
                         </flux:sidebar.item>

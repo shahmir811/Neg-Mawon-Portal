@@ -106,6 +106,56 @@
                     :placeholder="__('19111')"
                     :description="__('Helps James pick a nearby cleaner when assigning jobs.')"
                 />
+
+                <flux:input
+                    name="service_area"
+                    :label="__('Service area (optional)')"
+                    :value="old('service_area')"
+                    :placeholder="__('Philadelphia, Bucks County')"
+                    :description="__('Zip codes or neighborhoods you can cover.')"
+                />
+
+                <flux:textarea
+                    name="experience"
+                    :label="__('Cleaning experience (optional)')"
+                    :placeholder="__('Tell us about your cleaning experience')"
+                    rows="3"
+                >{{ old('experience') }}</flux:textarea>
+
+                <div class="flex flex-col gap-2">
+                    <flux:text>{{ __('Services offered (optional)') }}</flux:text>
+                    <div class="grid grid-cols-2 gap-2">
+                        @foreach (\App\Enums\ServiceType::cases() as $type)
+                            <flux:checkbox
+                                name="services_offered[]"
+                                value="{{ $type->value }}"
+                                :label="$type->label()"
+                                :checked="collect(old('services_offered', []))->contains($type->value)"
+                            />
+                        @endforeach
+                    </div>
+                </div>
+
+                <flux:input
+                    name="availability"
+                    :label="__('Availability (optional)')"
+                    :value="old('availability')"
+                    :placeholder="__('Weekdays, evenings, weekends')"
+                />
+
+                <flux:input
+                    name="business_name"
+                    :label="__('Business name (optional)')"
+                    :value="old('business_name')"
+                    :placeholder="__('If you operate as a business')"
+                />
+
+                <flux:input
+                    name="insurance_provider"
+                    :label="__('Insurance provider (optional)')"
+                    :value="old('insurance_provider')"
+                    :placeholder="__('If you carry liability insurance')"
+                />
             </div>
 
             <div class="flex items-center justify-end">

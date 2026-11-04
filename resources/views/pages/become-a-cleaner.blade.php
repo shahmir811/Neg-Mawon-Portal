@@ -4,31 +4,7 @@
         @include('partials.head', ['title' => 'Become a Cleaning Professional'])
     </head>
     <body class="bg-background text-text">
-        <header class="sticky top-0 z-50 border-b border-secondary bg-background/80 backdrop-blur-xl">
-            <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 sm:px-8">
-                <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-primary">
-                        <flux:icon.sparkles class="size-5 text-gold" />
-                    </span>
-                    <span class="text-xl font-semibold tracking-tight text-primary">NGM Cleaning</span>
-                </a>
-
-                <div class="flex items-center gap-6">
-                    <a href="{{ route('home') }}" class="hidden text-sm text-text transition-colors hover:text-primary sm:inline">Home</a>
-
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="rounded-full bg-primary px-5 py-2.5 text-sm text-background transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="hidden text-sm text-text transition-colors hover:text-primary sm:inline">Log in</a>
-                        <a href="{{ route('register', ['role' => 'cleaner']) }}" class="rounded-full bg-primary px-5 py-2.5 text-sm text-background transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20">
-                            Apply Now
-                        </a>
-                    @endauth
-                </div>
-            </nav>
-        </header>
+        <x-site-nav />
 
         <section class="relative overflow-hidden bg-background">
             <div class="absolute inset-0 -z-10">
@@ -53,9 +29,6 @@
                     <a href="{{ route('register', ['role' => 'cleaner']) }}" class="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-semibold text-background shadow-xl shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30">
                         Apply to Become an NGM Cleaning Professional
                         <flux:icon.arrow-right class="size-5 transition-transform group-hover:translate-x-1" />
-                    </a>
-                    <a href="#requirements" class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/70 px-8 py-4 font-semibold text-primary backdrop-blur-xl transition-all duration-300 hover:border-gold hover:bg-white">
-                        See Requirements
                     </a>
                 </div>
             </div>
@@ -104,32 +77,6 @@
                             <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-gold">{{ $item['step'] }}</div>
                             <h3 class="mb-2 text-lg font-semibold text-primary">{{ $item['title'] }}</h3>
                             <p class="text-sm leading-relaxed text-text/70">{{ $item['body'] }}</p>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-
-        <section id="requirements" class="bg-background py-20 md:py-28">
-            <div class="mx-auto max-w-4xl px-6 sm:px-8">
-                <div class="mb-14 text-center">
-                    <span class="mb-5 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Requirements</span>
-                    <h2 class="mb-5 text-4xl font-medium tracking-tight text-primary md:text-5xl">What it takes to join.</h2>
-                    <p class="mx-auto max-w-2xl text-lg leading-relaxed text-text/75">Every applicant is reviewed before joining the network. Here's what we look for.</p>
-                </div>
-
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    @foreach ([
-                        '18 years or older',
-                        'Legally authorized to work in the U.S.',
-                        'Reliable transportation to job sites',
-                        'A smartphone to receive job details',
-                        'Prior cleaning or housekeeping experience preferred',
-                        'Able to pass a background check',
-                    ] as $requirement)
-                        <div class="flex items-start gap-3 rounded-2xl border border-secondary bg-surface p-5">
-                            <flux:icon.check-circle class="mt-0.5 size-5 shrink-0 text-primary" />
-                            <p class="text-base text-text/85">{{ $requirement }}</p>
                         </div>
                     @endforeach
                 </div>
