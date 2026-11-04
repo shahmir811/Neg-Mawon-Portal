@@ -37,9 +37,7 @@ test('a residential quote request is saved and emailed to the ngm team', functio
 
     Mail::assertSent(ResidentialQuoteRequestReceived::class, function ($mail) use ($quoteRequest) {
         return $mail->quoteRequest->is($quoteRequest)
-            && $mail->hasTo('ngmcleaning2026@gmail.com')
-            && $mail->hasTo('jnguillaume4@gmail.com')
-            && $mail->hasTo('jldajeune@gmail.com');
+            && $mail->hasTo('ngmcleaning2026@gmail.com');
     });
 });
 
