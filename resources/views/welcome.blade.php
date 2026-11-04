@@ -402,7 +402,7 @@
 
                             @if (session('status') === 'contact-sent')
                                 <p class="relative mb-6 rounded-xl border border-gold/30 bg-gold/15 px-4 py-3 text-sm text-gold">
-                                    Thanks! Your message is on its way to James — we'll get back to you within 24 hours.
+                                    Thanks! We've received your message and will get back to you within 24 hours.
                                 </p>
                             @endif
 

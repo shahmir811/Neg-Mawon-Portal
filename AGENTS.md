@@ -556,6 +556,97 @@ the real `ngmcleaning-dev` bucket, not local disk.
 - The "professionalism brand rewrite" and the "two-sided marketplace" scope question above are both open
   questions with the client, not yet answered.
 
+## 13. Phase 1B — Marketplace positioning build (Jean-approved, 2026-11-04)
+
+Section 12 flagged "a private two-sided marketplace" as an open, unanswered question. Jean (client contact)
+has since approved a scoped-down, quoted version of it ($350 one-time, separate from the Section 10 MVP fee)
+covering dual customer/cleaner entry points, a public quote-request flow, and an expanded cleaner
+application – explicitly **not** the full marketplace rebuild (no self-serve booking, public cleaner
+profiles/ratings, Stripe Connect payouts, automated dispatch, or in-app messaging – all of that still
+conflicts with Section 3 rules 1–3 and remains out of scope per Section 7).
+
+### Public quote requests (replaces the old single `#contact`-only flow)
+
+- New `quote_requests` table/model (`App\Models\QuoteRequest`), `type` column (`App\Enums\QuoteType`:
+  Residential/Commercial) plus nullable type-specific columns – same "nullable columns on one table" shape
+  as `cleaning_jobs`. Commercial-only `business_type` uses a new `App\Enums\CommercialBusinessType` enum
+  (office, retail, church/nonprofit, apartment common areas, post-construction, property management
+  contract); residential reuses the existing `ServiceType`/`JobFrequency` enums – confirmed neither is read
+  by `JobPriceCalculator`, so reuse here doesn't risk pricing side effects. `PropertyType` (which *does*
+  drive pricing) was deliberately left untouched.
+- Two standalone pages, not one combined form – `resources/views/pages/get-a-quote-residential.blade.php`
+  and `get-a-quote-commercial.blade.php` (`quotes.residential.create` / `quotes.commercial.create` routes),
+  each with a pill toggle linking to the other. This replaced an earlier single-page `#quote` section on the
+  homepage that the client felt was overloaded with fields once both forms were visible at once.
+- `App\Http\Controllers\QuoteRequestController` (`residential()`/`commercial()`) validates, creates the
+  `QuoteRequest` row, and sends `App\Mail\ResidentialQuoteRequestReceived` or
+  `CommercialQuoteRequestReceived` (one shared template, `resources/views/emails/quote-request.blade.php`,
+  conditional sections per type) – not an extension of the existing `ContactController`, to keep the
+  original lightweight `#contact` form on the homepage untouched as a fallback.
+- **Recipient list is now environment-aware**, and this applies to all three outbound notification emails
+  (`ContactController`, and both `QuoteRequestController` methods) – not just the new ones. Centralized in
+  `App\Support\NotificationRecipients::all()`: production sends to the full team
+  (`ngmcleaning2026@gmail.com`, `jnguillaume4@gmail.com`, `jldajeune@gmail.com`, per Section 12's contact
+  form); any other environment sends only to `ngmcleaning2026@gmail.com`, to stop test submissions from
+  landing in Jean's/James's personal inboxes. **Testing gotcha**: don't swap `app()->instance('env', ...)`
+  inside an HTTP feature test to exercise this – Laravel's CSRF middleware only skips verification when
+  `app()->environment() === 'testing'` exactly, so overriding it mid-test silently 419s the request before
+  the mailable ever sends. Test the environment branching as a plain unit call to
+  `NotificationRecipients::all()` instead (see `tests/Feature/NotificationRecipientsTest.php`).
+- Admin-only **Quote Requests** page (`resources/views/pages/admin/⚡quote-requests.blade.php`,
+  `admin.quote-requests` route, sidebar link) – same `#[Computed]`-array-list + detail-modal shape as the
+  existing Cleaners/Customers admin pages, with a type filter. **Gotcha already hit and fixed**: naming a
+  Livewire SFC action method `view()` causes a totally silent crash (no stdout/stderr, exit code 1) on
+  *every* request to that route, including 403-denied ones – this cost significant debugging time via binary
+  search before being isolated. The method is named `show()` here specifically to avoid this; don't rename
+  it back, and avoid `view()` as an action-method name on any future Livewire SFC page in this codebase.
+- No pricing shown on either quote form (consistent with Section 4a/9's placeholder-pricing caveat – James
+  still hasn't supplied real rates).
+
+### Expanded cleaner application
+
+- Six new **nullable** columns on `cleaner_profiles`: `service_area`, `experience` (text),
+  `services_offered` (JSON array of `ServiceType` values), `availability`, `business_name`,
+  `insurance_provider` – same incremental-nullable-column pattern as the existing `zip_code` addition
+  (Section 4a). All optional; this is an expanded signup, **not** a new pre-approval gate – the existing
+  agreement-approval flow (Section 6) is unchanged.
+- Collected in the existing cleaner registration flow (`app/Actions/Fortify/CreateNewUser.php`,
+  `resources/views/pages/auth/register.blade.php`, inside the existing `role === 'cleaner'` block) – no new
+  signup path.
+- Surfaced to James via a new "Partner Info" column + detail modal on the admin Cleaners List
+  (`resources/views/pages/admin/⚡cleaners.blade.php`) so he can see this context before approving a
+  cleaner's agreement.
+
+### Homepage, nav, and cleaner-recruitment page changes
+
+- `resources/views/welcome.blade.php`: services section split into labeled Residential (original 4 cards,
+  unchanged) and Commercial (6 new cards: office, retail, church/nonprofit, apartment common areas,
+  post-construction, property management contracts) sub-sections. The FAQ section/nav link/footer link were
+  removed (dead `#faq` anchors, no FAQ content existed). The old single-page `#quote` section was removed in
+  favor of the two standalone pages above.
+- Navigation unified into one shared component, `resources/views/components/site-nav.blade.php`
+  (`<x-site-nav />`), used by the homepage, `become-a-cleaner`, and both quote pages – previously each page
+  had its own hand-rolled nav and they'd drifted out of sync. Anchor links (`#services`, `#testimonials`,
+  `#contact`) resolve contextually via `request()->routeIs('home')` – a bare `#anchor` on the homepage,
+  `route('home').'#anchor'` elsewhere. Simplified down from an earlier 9-link version (dropped "About",
+  "Process", a standalone "Find a Cleaning Professional" link, and the phone number – all either redundant
+  with an existing CTA or still present as an on-page section) to two paired CTAs for guests: an outline
+  **"Have a Question?"** button (→ `#contact`, the original lightweight contact form) and a filled **"Free
+  Quote"** button (→ the residential quote page) – restoring the pre-rework "ask a question" entry point
+  that the nav simplification had briefly dropped, alongside the new quote-request path, not replacing it.
+- `resources/views/pages/become-a-cleaner.blade.php`: the "Requirements" section (18+/legally authorized/
+  etc.) was removed after the client confirmed it wasn't part of Jean's actual feedback – it predated this
+  round and had just been carried over.
+- Contact-form and quote-request success messages no longer name James by name (e.g. "Thanks! We've received
+  your quote request and will get back to you within 24 hours.") – kept the team framing consistent with the
+  "vetted network of professionals" voice from Section 12, rather than naming the single admin.
+
+### Deliberately not built in this round
+
+New service types (move-out, Airbnb turnover) were **not** added to `CleaningJobFormFields`/`ServiceType`/
+`JobPriceCalculator` – same reasoning as Section 11: James hasn't supplied real rates for the service types
+that already exist, so adding more without pricing input isn't buildable yet.
+
 ===
 
 <laravel-boost-guidelines>
