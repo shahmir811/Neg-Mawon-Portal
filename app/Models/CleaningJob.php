@@ -128,7 +128,9 @@ class CleaningJob extends Model
      */
     public function displayPrice(): ?string
     {
-        return $this->final_price ?? $this->estimated_price;
+        $price = $this->final_price ?? $this->estimated_price;
+
+        return $price === null ? null : (string) $price;
     }
 
     /**
