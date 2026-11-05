@@ -190,7 +190,8 @@ photo – nothing else about them.
     messaging, etc.). That is explicitly **out of scope** for this app — it conflicts with every
     non-negotiable rule at the top of this file (manual-only assignment, no cleaner PII to customers, no
     in-app payments) and would require a separate scoping/pricing conversation, not incremental code
-    changes. Only the cheap, non-architectural pieces of that feedback were implemented:
+    changes. At the time, only the cheap, non-architectural pieces of that feedback were implemented (the
+    rest was scoped and later approved as Phase 1B — see item 12 below):
     - `resources/views/welcome.blade.php` copy was reframed from "family-run team" to "vetted network of
       cleaning professionals" (hero eyebrow/subhead, "Our Story" section, footer blurb) — this also
       completes the "professionalism as primary brand" voice rewrite flagged as not-yet-done in item 10
@@ -205,6 +206,42 @@ photo – nothing else about them.
       the copy/page changes, that would touch `CleaningJobFormFields`, the pricing enum, and
       `JobPriceCalculator`, and James hasn't supplied real rates even for the existing service types yet
       (see item 9's pricing note). Needs his input before it's buildable.
+12. **Phase 1B — Marketplace positioning build** (AGENTS.md Section 13 has full detail) — Jean approved a
+    scoped, quoted version ($350) of the "two-sided marketplace" feedback from item 11. Still **not** the
+    full marketplace rebuild (no self-serve booking, public cleaner profiles, Stripe Connect, automated
+    dispatch, or messaging — all still forbidden by the non-negotiable rules above). What's actually built:
+    - **Public quote requests**: new `quote_requests` table/model, `App\Enums\QuoteType` /
+      `CommercialBusinessType`, and `App\Http\Controllers\QuoteRequestController` (`residential()` /
+      `commercial()`) — two standalone pages (`get-a-quote-residential.blade.php` /
+      `get-a-quote-commercial.blade.php`), not one combined form; each sends a branded email
+      (`App\Mail\ResidentialQuoteRequestReceived` / `CommercialQuoteRequestReceived`,
+      `resources/views/emails/quote-request.blade.php`). Separate from `ContactController` — the original
+      lightweight `#contact` form on the homepage is untouched and still reachable via a "Have a Question?"
+      nav button.
+    - **Recipients are now environment-aware across all three outbound emails** (contact form + both quote
+      types): `App\Support\NotificationRecipients::all()` — production sends to the full team
+      (`ngmcleaning2026@gmail.com`, `jnguillaume4@gmail.com`, `jldajeune@gmail.com`), any other environment
+      sends only to `ngmcleaning2026@gmail.com`. Don't test this by swapping `app()->instance('env', ...)`
+      inside an HTTP feature test — it silently breaks Laravel's CSRF test-bypass (which only triggers when
+      `app()->environment() === 'testing'` exactly) and the request 419s before mail sends. Test it as a
+      plain unit call instead (`tests/Feature/NotificationRecipientsTest.php`).
+    - **Admin Quote Requests page** (`resources/views/pages/admin/⚡quote-requests.blade.php`,
+      `admin.quote-requests`) — same `#[Computed]`-list pattern as Cleaners/Customers. **Gotcha**: a
+      Livewire SFC action method named `view()` causes a totally silent crash (no output, exit code 1) on
+      every request to that route — this cost a long binary-search debugging session. The method here is
+      named `show()` specifically to dodge this; never name a Livewire SFC action method `view()` anywhere
+      in this codebase.
+    - **Expanded cleaner application**: 6 new nullable `cleaner_profiles` columns (`service_area`,
+      `experience`, `services_offered` json, `availability`, `business_name`, `insurance_provider`), same
+      incremental-nullable pattern as `zip_code` — collected in the existing registration flow, surfaced to
+      James via a new "Partner Info" column/modal on the Cleaners List. Not a new approval gate.
+    - **Shared nav** (`resources/views/components/site-nav.blade.php`, `<x-site-nav />`) replaces four
+      previously-drifted hand-rolled navs (homepage, become-a-cleaner, both quote pages). Simplified to two
+      paired guest CTAs: outline **"Have a Question?"** (→ `#contact`) and filled **"Free Quote"** (→
+      residential quote page) — both needed; don't drop one thinking the other replaces it.
+    - FAQ nav/footer links removed (dead `#faq`, no content ever existed); `become-a-cleaner`'s
+      "Requirements" section removed (confirmed with the client it predated this feedback round); confirmation
+      messages no longer name James by name.
 
 ## When something is ambiguous
 

@@ -11,3 +11,13 @@ parameters:
         - routes/
 
     level: 7
+
+    # CleaningJobFormFields is only ever `use`d inside Livewire single-file-component
+    # Blade views (resources/views/pages/customer/*.blade.php), which fall outside the
+    # `paths` above by design — PHPStan can't parse Blade templates, so it never sees
+    # those usages and flags the trait as dead. It isn't; see
+    # https://phpstan.org/blog/how-phpstan-analyses-traits
+    ignoreErrors:
+        -
+            identifier: trait.unused
+            path: app/Concerns/CleaningJobFormFields.php

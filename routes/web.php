@@ -2,11 +2,16 @@
 
 use App\Enums\Role;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\QuoteRequestController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 Route::view('/become-a-cleaner', 'pages.become-a-cleaner')->name('become-a-cleaner');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::view('/get-a-quote/residential', 'pages.get-a-quote-residential')->name('quotes.residential.create');
+Route::post('/quotes/residential', [QuoteRequestController::class, 'residential'])->name('quotes.residential.store');
+Route::view('/get-a-quote/commercial', 'pages.get-a-quote-commercial')->name('quotes.commercial.create');
+Route::post('/quotes/commercial', [QuoteRequestController::class, 'commercial'])->name('quotes.commercial.store');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
@@ -22,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('jobs/{job}', 'pages::admin.job')->name('jobs.show');
         Route::livewire('cleaners', 'pages::admin.cleaners')->name('cleaners');
         Route::livewire('customers', 'pages::admin.customers')->name('customers');
+        Route::livewire('quote-requests', 'pages::admin.quote-requests')->name('quote-requests');
         Route::livewire('pricing', 'pages::admin.pricing')->name('pricing');
         Route::livewire('backups', 'pages::admin.backups')->name('backups');
     });

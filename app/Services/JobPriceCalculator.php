@@ -87,7 +87,9 @@ class JobPriceCalculator
         $subtotal = array_sum(array_column($lines, 'amount'));
 
         $frequency = self::valueOf($attributes['frequency'] ?? null) ?? JobFrequency::OneTime->value;
-        $discountPercent = (float) ($settings->frequency_discounts[$frequency] ?? 0);
+        $frequencyDiscounts = $settings->getAttribute('frequency_discounts');
+        $frequencyDiscounts = is_array($frequencyDiscounts) ? $frequencyDiscounts : [];
+        $discountPercent = (float) ($frequencyDiscounts[$frequency] ?? 0);
         $discountAmount = $subtotal * ($discountPercent / 100);
 
         return [

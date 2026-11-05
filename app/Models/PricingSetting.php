@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Model;
     'deep_cleaning_surcharge',
     'frequency_discounts',
 ])]
+/**
+ * @property-read array<string, int|float> $frequency_discounts
+ */
 class PricingSetting extends Model
 {
     /**

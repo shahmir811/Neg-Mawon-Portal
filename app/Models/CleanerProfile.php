@@ -24,6 +24,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'stripe_id',
     'stripe_status',
     'next_renewal_at',
+    'service_area',
+    'experience',
+    'services_offered',
+    'availability',
+    'business_name',
+    'insurance_provider',
 ])]
 class CleanerProfile extends Model
 {
@@ -40,6 +46,7 @@ class CleanerProfile extends Model
             'subscription_plan' => SubscriptionPlan::class,
             'subscription_status' => SubscriptionStatus::class,
             'next_renewal_at' => 'datetime',
+            'services_offered' => 'array',
         ];
     }
 

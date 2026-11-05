@@ -27,69 +27,7 @@
         </style>
     </head>
     <body class="bg-background text-text">
-        <header class="sticky top-0 z-50 border-b border-secondary bg-background/80 backdrop-blur-xl">
-            <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 sm:px-8">
-                <a href="#hero" class="flex items-center gap-2">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-primary">
-                        <flux:icon.sparkles class="size-5 text-gold" />
-                    </span>
-                    <span class="text-xl font-semibold tracking-tight text-primary">NGM Cleaning</span>
-                </a>
-
-                <div class="hidden items-center gap-8 md:flex">
-                    <a href="#services" class="text-sm text-text transition-colors hover:text-primary">Services</a>
-                    <a href="#about" class="text-sm text-text transition-colors hover:text-primary">About</a>
-                    <a href="#process" class="text-sm text-text transition-colors hover:text-primary">Process</a>
-                    <a href="#testimonials" class="text-sm text-text transition-colors hover:text-primary">Reviews</a>
-                    <a href="#faq" class="text-sm text-text transition-colors hover:text-primary">FAQ</a>
-                    <a href="{{ route('become-a-cleaner') }}" class="text-sm text-text transition-colors hover:text-primary">Become a Cleaner</a>
-                    <a href="tel:+12676901707" class="flex items-center gap-1.5 text-sm font-semibold text-primary">
-                        <flux:icon.phone class="size-4" />
-                        (267) 690-1707
-                    </a>
-
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="rounded-full bg-primary px-5 py-2.5 text-sm text-background transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm text-text transition-colors hover:text-primary">Log in</a>
-                        <a href="#contact" class="rounded-full bg-primary px-5 py-2.5 text-sm text-background transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20">
-                            Free Quote
-                        </a>
-                    @endauth
-                </div>
-
-                <div x-data="{ open: false }" class="md:hidden">
-                    <button @click="open = !open" class="text-primary" aria-label="Toggle menu">
-                        <flux:icon.bars-3 class="size-6" />
-                    </button>
-
-                    <div x-show="open" x-cloak class="absolute inset-x-0 top-full border-t border-secondary bg-background">
-                        <div class="flex flex-col gap-4 px-6 py-4">
-                            <a @click="open = false" href="#services" class="text-sm text-text">Services</a>
-                            <a @click="open = false" href="#about" class="text-sm text-text">About</a>
-                            <a @click="open = false" href="#process" class="text-sm text-text">Process</a>
-                            <a @click="open = false" href="#testimonials" class="text-sm text-text">Reviews</a>
-                            <a @click="open = false" href="#faq" class="text-sm text-text">FAQ</a>
-                            <a @click="open = false" href="{{ route('become-a-cleaner') }}" class="text-sm text-text">Become a Cleaner</a>
-                            <a @click="open = false" href="tel:+12676901707" class="text-sm font-semibold text-primary">(267) 690-1707</a>
-
-                            @auth
-                                <a @click="open = false" href="{{ route('dashboard') }}" class="rounded-full bg-primary px-5 py-2.5 text-center text-sm text-background">
-                                    Dashboard
-                                </a>
-                            @else
-                                <a @click="open = false" href="{{ route('login') }}" class="text-sm text-text">Log in</a>
-                                <a @click="open = false" href="#contact" class="rounded-full bg-primary px-5 py-2.5 text-center text-sm text-background">
-                                    Free Quote
-                                </a>
-                            @endauth
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header>
+        <x-site-nav />
 
         <section id="hero" class="relative overflow-hidden bg-background">
             <div class="absolute inset-0 -z-10">
@@ -124,13 +62,12 @@
                     </p>
 
                     <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-                        <a href="tel:+12676901707" class="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-semibold text-background shadow-xl shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30">
-                            <flux:icon.phone class="size-5" />
-                            Call (267) 690-1707
-                        </a>
-                        <a href="#contact" class="group inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/70 px-8 py-4 font-semibold text-primary backdrop-blur-xl transition-all duration-300 hover:border-gold hover:bg-white">
-                            Get a Free Quote
+                        <a href="{{ route('quotes.residential.create') }}" class="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-semibold text-background shadow-xl shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30">
+                            Find a Cleaning Professional
                             <flux:icon.arrow-right class="size-5 transition-transform group-hover:translate-x-1" />
+                        </a>
+                        <a href="{{ route('become-a-cleaner') }}" class="group inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/70 px-8 py-4 font-semibold text-primary backdrop-blur-xl transition-all duration-300 hover:border-gold hover:bg-white">
+                            Become a Cleaning Partner
                         </a>
                     </div>
 
@@ -175,31 +112,61 @@
             <div class="mx-auto max-w-6xl px-6 sm:px-8">
                 <div class="animate-on-scroll mb-16 text-center">
                     <span class="mb-5 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">What We Offer</span>
-                    <h2 class="mb-5 text-4xl font-medium tracking-tight text-primary md:text-5xl lg:text-6xl">Cleaning services built<br>around your home</h2>
-                    <p class="mx-auto max-w-2xl text-lg leading-relaxed text-text/75">From weekly upkeep to full move-out clearances, our team treats every home, business, and organization with the care it deserves.</p>
+                    <h2 class="mb-5 text-4xl font-medium tracking-tight text-primary md:text-5xl lg:text-6xl">Cleaning services for homes<br>and businesses alike</h2>
+                    <p class="mx-auto max-w-2xl text-lg leading-relaxed text-text/75">From weekly upkeep to full commercial contracts, our network treats every home, business, and organization with the care it deserves.</p>
                 </div>
 
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    @foreach ([
-                        ['icon' => 'sparkles', 'title' => 'Standard Cleaning', 'body' => 'Dusting, vacuuming, mopping, kitchens, and baths – the full checklist, done right every visit. Book one-time or on a recurring schedule.'],
-                        ['icon' => 'spray-can', 'title' => 'Deep Cleaning', 'body' => 'Baseboards, grout, inside appliances, vents – the works. The standard reset for move-ins, seasonal refreshes, or a first-time clean.'],
-                        ['icon' => 'package', 'title' => 'House Clearance', 'body' => 'Estate cleanouts, post-renovation debris, garage clearances – hauled, sorted, and left spotless, start to finish.'],
-                        ['icon' => 'layout-grid', 'title' => 'Professional Organizing', 'body' => 'Closets, pantries, playrooms – transformed into calm, functional spaces you\'ll actually maintain long after we leave.'],
-                    ] as $index => $service)
-                        <div class="animate-on-scroll group relative rounded-3xl border border-secondary bg-surface p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="--reveal-delay: {{ $index * 100 }}ms;">
-                            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary transition-transform duration-500 group-hover:scale-110">
-                                <flux:icon :name="$service['icon']" class="size-7 text-gold" />
+                <div class="animate-on-scroll mb-10">
+                    <h3 class="mb-8 text-center text-xs font-semibold uppercase tracking-widest text-primary/70">Residential</h3>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                        @foreach ([
+                            ['icon' => 'sparkles', 'title' => 'Standard Cleaning', 'body' => 'Dusting, vacuuming, mopping, kitchens, and baths – the full checklist, done right every visit. Book one-time or on a recurring schedule.'],
+                            ['icon' => 'spray-can', 'title' => 'Deep Cleaning', 'body' => 'Baseboards, grout, inside appliances, vents – the works. The standard reset for move-ins, seasonal refreshes, or a first-time clean.'],
+                            ['icon' => 'package', 'title' => 'House Clearance', 'body' => 'Estate cleanouts, post-renovation debris, garage clearances – hauled, sorted, and left spotless, start to finish.'],
+                            ['icon' => 'layout-grid', 'title' => 'Professional Organizing', 'body' => 'Closets, pantries, playrooms – transformed into calm, functional spaces you\'ll actually maintain long after we leave.'],
+                        ] as $index => $service)
+                            <div class="animate-on-scroll group relative rounded-3xl border border-secondary bg-surface p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="--reveal-delay: {{ $index * 100 }}ms;">
+                                <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary transition-transform duration-500 group-hover:scale-110">
+                                    <flux:icon :name="$service['icon']" class="size-7 text-gold" />
+                                </div>
+                                <h3 class="mb-3 text-2xl font-medium text-primary">{{ $service['title'] }}</h3>
+                                <p class="mb-5 text-base leading-relaxed text-text/70">{{ $service['body'] }}</p>
+                                <div class="h-0.5 w-0 bg-gold transition-all duration-500 group-hover:w-16"></div>
                             </div>
-                            <h3 class="mb-3 text-2xl font-medium text-primary">{{ $service['title'] }}</h3>
-                            <p class="mb-5 text-base leading-relaxed text-text/70">{{ $service['body'] }}</p>
-                            <div class="h-0.5 w-0 bg-gold transition-all duration-500 group-hover:w-16"></div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
 
-                <div class="animate-on-scroll mt-10 text-center">
-                    <a href="#contact" class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-gold">
-                        Not sure which service you need? Get a free quote
+                <div class="animate-on-scroll">
+                    <h3 class="mb-8 text-center text-xs font-semibold uppercase tracking-widest text-primary/70">Commercial</h3>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        @foreach ([
+                            ['icon' => 'briefcase', 'title' => 'Office Cleaning', 'body' => 'Reception areas, workstations, breakrooms, and restrooms kept consistently clean so your team and clients notice the difference, not the dust. Scheduled before or after business hours to never disrupt your workday.'],
+                            ['icon' => 'building-storefront', 'title' => 'Retail Cleaning', 'body' => 'Sales floors, fitting rooms, and storefront windows kept spotless to match the first impression your brand deserves. Flexible scheduling works around your open hours and foot traffic.'],
+                            ['icon' => 'building-library', 'title' => 'Church & Nonprofit Cleaning', 'body' => 'Sanctuaries, fellowship halls, and classrooms cleaned with the same care and respect your congregation gives its community. Weekly, biweekly, or event-based scheduling available.'],
+                            ['icon' => 'building-office-2', 'title' => 'Apartment Common Areas', 'body' => 'Lobbies, hallways, laundry rooms, and shared amenity spaces kept welcoming for every resident, every day. Recurring service keeps your property looking as well-managed as it\'s run.'],
+                            ['icon' => 'wrench-screwdriver', 'title' => 'Post-Construction Cleaning', 'body' => 'Dust, debris, and residue cleared from every surface after renovation or build-out, so the space is truly move-in ready. One-time deep cleans scheduled around your project timeline.'],
+                            ['icon' => 'document-text', 'title' => 'Property Management Contracts', 'body' => 'Ongoing cleaning coverage across your full portfolio, coordinated through one point of contact so you\'re not juggling vendors property by property. Custom frequency and scope built around your contract, not a one-size-fits-all package.'],
+                        ] as $index => $service)
+                            <div class="animate-on-scroll group relative rounded-3xl border border-secondary bg-surface p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="--reveal-delay: {{ $index * 100 }}ms;">
+                                <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary transition-transform duration-500 group-hover:scale-110">
+                                    <flux:icon :name="$service['icon']" class="size-7 text-gold" />
+                                </div>
+                                <h3 class="mb-3 text-2xl font-medium text-primary">{{ $service['title'] }}</h3>
+                                <p class="mb-5 text-base leading-relaxed text-text/70">{{ $service['body'] }}</p>
+                                <div class="h-0.5 w-0 bg-gold transition-all duration-500 group-hover:w-16"></div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="animate-on-scroll mt-10 flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-6">
+                    <a href="{{ route('quotes.residential.create') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-gold">
+                        Get a Residential Quote
+                        <flux:icon.arrow-right class="size-4" />
+                    </a>
+                    <a href="{{ route('quotes.commercial.create') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-gold">
+                        Get a Commercial Quote
                         <flux:icon.arrow-right class="size-4" />
                     </a>
                 </div>
@@ -220,7 +187,7 @@
                                 </div>
                             @endforeach
                         </div>
-                        <a href="#contact" class="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-semibold text-background shadow-xl shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30">
+                        <a href="{{ route('quotes.residential.create') }}" class="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-semibold text-background shadow-xl shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-primary/30">
                             Set Up Recurring Service
                             <flux:icon.arrow-right class="size-5" />
                         </a>
@@ -370,10 +337,10 @@
                         <span class="text-xs font-semibold uppercase tracking-widest text-gold">Get In Touch</span>
                     </div>
                     <h2 class="mb-4 text-4xl font-normal leading-tight text-background md:text-5xl lg:text-6xl">
-                        Ready for a <em class="not-italic text-gold">Spotless</em> Home?
+                        Have a <em class="not-italic text-gold">Question</em>?
                     </h2>
                     <p class="mx-auto max-w-2xl text-lg leading-relaxed text-secondary/85">
-                        Request your free quote and book a cleaning today – one-time or recurring. Our team will get back to you within 24 hours.
+                        Not ready for a full quote request yet? Send us a message and our team will get back to you within 24 hours.
                     </p>
                 </div>
 
@@ -435,7 +402,7 @@
 
                             @if (session('status') === 'contact-sent')
                                 <p class="relative mb-6 rounded-xl border border-gold/30 bg-gold/15 px-4 py-3 text-sm text-gold">
-                                    Thanks! Your message is on its way to James — we'll get back to you within 24 hours.
+                                    Thanks! We've received your message and will get back to you within 24 hours.
                                 </p>
                             @endif
 
@@ -479,11 +446,11 @@
                                 </div>
 
                                 <div>
-                                    <label for="message" class="mb-2 block text-xs font-semibold uppercase tracking-widest text-gold">Tell Us About Your Home</label>
+                                    <label for="message" class="mb-2 block text-xs font-semibold uppercase tracking-widest text-gold">Your Message</label>
                                     <textarea
                                         id="message" name="message" rows="5" required
                                         class="w-full resize-none rounded-xl border border-white/20 bg-white/8 px-5 py-4 text-background placeholder:text-background/40 backdrop-blur-xl transition-all focus:outline-none focus:ring-2 focus:ring-gold"
-                                        placeholder="How many bedrooms/bathrooms? Type of cleaning needed? Preferred date?"
+                                        placeholder="What would you like to know?"
                                     >{{ old('message') }}</textarea>
                                     @error('message')
                                         <p class="mt-2 text-sm text-rose-300">{{ $message }}</p>
@@ -495,7 +462,7 @@
                                     class="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-xl px-8 py-4 text-base font-semibold text-primary transition-all hover:-translate-y-0.5 hover:shadow-2xl"
                                     style="background: linear-gradient(135deg, var(--color-gold), #b8892e);"
                                 >
-                                    <span>Request My Free Quote</span>
+                                    <span>Send Message</span>
                                     <flux:icon.arrow-right class="size-5 transition-transform group-hover:translate-x-1" />
                                 </button>
 
@@ -545,6 +512,7 @@
                             <li><a href="#services" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">Deep Cleaning</a></li>
                             <li><a href="#services" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">House Clearance</a></li>
                             <li><a href="#services" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">Professional Organizing</a></li>
+                            <li><a href="#services" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">Commercial Cleaning</a></li>
                             <li><a href="#recurring" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:-translate-y-0.5 hover:text-gold">Recurring Cleaning</a></li>
                         </ul>
                     </div>
@@ -555,9 +523,8 @@
                             <li><a href="#about" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">About Us</a></li>
                             <li><a href="#process" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Our Process</a></li>
                             <li><a href="#testimonials" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Reviews</a></li>
-                            <li><a href="#faq" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">FAQ</a></li>
-                            <li><a href="#contact" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Get a Quote</a></li>
-                            <li><a href="{{ route('become-a-cleaner') }}" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Become a Cleaner</a></li>
+                            <li><a href="{{ route('quotes.residential.create') }}" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Get a Quote</a></li>
+                            <li><a href="{{ route('become-a-cleaner') }}" class="inline-block text-sm text-secondary/75 transition-colors duration-300 hover:text-gold">Become a Cleaning Partner</a></li>
                         </ul>
                     </div>
 

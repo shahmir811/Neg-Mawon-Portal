@@ -20,6 +20,16 @@ new #[Title('Cleaners')] class extends Component
 
     public ?int $uploadingCleanerId = null;
 
+    public bool $showPartnerInfoModal = false;
+
+    public ?int $viewingPartnerInfoId = null;
+
+    public function viewPartnerInfo(int $cleanerId): void
+    {
+        $this->viewingPartnerInfoId = $cleanerId;
+        $this->showPartnerInfoModal = true;
+    }
+
     /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null */
     public $agreementPhoto = null;
 
@@ -91,6 +101,12 @@ new #[Title('Cleaners')] class extends Component
                 'phone' => $cleaner->cleanerProfile?->phone,
                 'zip_code' => $cleaner->cleanerProfile?->zip_code,
                 'photo_url' => StorageUrl::for($cleaner->cleanerProfile?->photo_path),
+                'service_area' => $cleaner->cleanerProfile?->service_area,
+                'experience' => $cleaner->cleanerProfile?->experience,
+                'services_offered' => $cleaner->cleanerProfile?->services_offered ?? [],
+                'availability' => $cleaner->cleanerProfile?->availability,
+                'business_name' => $cleaner->cleanerProfile?->business_name,
+                'insurance_provider' => $cleaner->cleanerProfile?->insurance_provider,
                 'agreement_status' => $cleaner->cleanerProfile?->agreementStatus() ?? AgreementStatus::NotSubmitted,
                 'agreement_photo_url' => StorageUrl::for($cleaner->cleanerProfile?->agreement_photo_path),
                 'subscription_status' => $cleaner->cleanerProfile?->subscription_status,
@@ -110,6 +126,16 @@ new #[Title('Cleaners')] class extends Component
         }
 
         return collect($this->cleaners)->firstWhere('id', $this->uploadingCleanerId);
+    }
+
+    #[Computed]
+    public function viewingPartnerInfo(): ?array
+    {
+        if (! $this->viewingPartnerInfoId) {
+            return null;
+        }
+
+        return collect($this->cleaners)->firstWhere('id', $this->viewingPartnerInfoId);
     }
 }
 ?>
@@ -136,6 +162,7 @@ new #[Title('Cleaners')] class extends Component
                 <flux:table.column>{{ __('Subscription') }}</flux:table.column>
                 <flux:table.column>{{ __('Active jobs') }}</flux:table.column>
                 <flux:table.column>{{ __('Completed') }}</flux:table.column>
+                <flux:table.column>{{ __('Partner Info') }}</flux:table.column>
             </flux:table.columns>
 
             <flux:table.rows>
@@ -208,6 +235,11 @@ new #[Title('Cleaners')] class extends Component
                         </flux:table.cell>
                         <flux:table.cell>{{ $cleaner['assigned_jobs_count'] }}</flux:table.cell>
                         <flux:table.cell>{{ $cleaner['completed_jobs_count'] }}</flux:table.cell>
+                        <flux:table.cell>
+                            <flux:button size="sm" variant="ghost" wire:click="viewPartnerInfo({{ $cleaner['id'] }})">
+                                {{ __('View') }}
+                            </flux:button>
+                        </flux:table.cell>
                     </flux:table.row>
                 @endforeach
             </flux:table.rows>
@@ -253,6 +285,53 @@ new #[Title('Cleaners')] class extends Component
                     </flux:button>
                 </div>
             </form>
+        @endif
+    </flux:modal>
+
+    <flux:modal wire:model.self="showPartnerInfoModal" class="w-full max-w-md">
+        @if ($this->viewingPartnerInfo)
+            <div class="flex flex-col gap-4">
+                <flux:heading size="lg" class="text-primary">
+                    {{ __(":name's partner info", ['name' => $this->viewingPartnerInfo['name']]) }}
+                </flux:heading>
+
+                <div class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+                    <div>
+                        <flux:text class="text-text/60">{{ __('Service area') }}</flux:text>
+                        <flux:text class="text-primary">{{ $this->viewingPartnerInfo['service_area'] ?? __('Not provided') }}</flux:text>
+                    </div>
+                    <div>
+                        <flux:text class="text-text/60">{{ __('Availability') }}</flux:text>
+                        <flux:text class="text-primary">{{ $this->viewingPartnerInfo['availability'] ?? __('Not provided') }}</flux:text>
+                    </div>
+                    <div>
+                        <flux:text class="text-text/60">{{ __('Business name') }}</flux:text>
+                        <flux:text class="text-primary">{{ $this->viewingPartnerInfo['business_name'] ?? __('Not provided') }}</flux:text>
+                    </div>
+                    <div>
+                        <flux:text class="text-text/60">{{ __('Insurance provider') }}</flux:text>
+                        <flux:text class="text-primary">{{ $this->viewingPartnerInfo['insurance_provider'] ?? __('Not provided') }}</flux:text>
+                    </div>
+                </div>
+
+                <div>
+                    <flux:text class="text-text/60">{{ __('Experience') }}</flux:text>
+                    <flux:text class="whitespace-pre-line text-primary">{{ $this->viewingPartnerInfo['experience'] ?? __('Not provided') }}</flux:text>
+                </div>
+
+                <div>
+                    <flux:text class="mb-1 block text-text/60">{{ __('Services offered') }}</flux:text>
+                    @if (count($this->viewingPartnerInfo['services_offered']) > 0)
+                        <div class="flex flex-wrap gap-1.5">
+                            @foreach ($this->viewingPartnerInfo['services_offered'] as $serviceType)
+                                <flux:badge>{{ \App\Enums\ServiceType::from($serviceType)->label() }}</flux:badge>
+                            @endforeach
+                        </div>
+                    @else
+                        <flux:text class="text-primary">{{ __('Not provided') }}</flux:text>
+                    @endif
+                </div>
+            </div>
         @endif
     </flux:modal>
 </div>

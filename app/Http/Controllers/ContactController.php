@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactFormReceived;
+use App\Support\NotificationRecipients;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -18,11 +19,7 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'max:2000'],
         ]);
 
-        Mail::to([
-            'ngmcleaning2026@gmail.com',
-            'jnguillaume4@gmail.com',
-            'jldajeune@gmail.com',
-        ])->send(new ContactFormReceived(
+        Mail::to(NotificationRecipients::all())->send(new ContactFormReceived(
             $validated['name'],
             $validated['email'],
             $validated['phone'],
